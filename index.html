@@ -396,52 +396,37 @@ select option{background:var(--surface2);}
       </div>
 
       <!-- PASO 3: FASE -->
-      <!-- PASO 3: PROCESOS DEL DÍA -->
       <div class="card hidden" id="paso3">
-        <div class="card-title"><span class="step-num">2</span> Procesos del día</div>
-        <label>¿En qué procesos has trabajado hoy? Añade uno o varios.</label>
-
-        <!-- Lista de procesos añadidos -->
-        <div id="procesosAñadidos" style="display:none;margin-bottom:12px">
-          <div style="font-size:12px;color:var(--accent);font-weight:700;margin-bottom:6px">Procesos registrados hoy:</div>
-          <div id="listaProcesosHoy"></div>
+        <div class="card-title"><span class="step-num">2</span> Proceso de reparación</div>
+        <label>¿En qué proceso estás trabajando hoy?</label>
+        <div class="fases-grid">
+          <div class="fase-opt" onclick="selectFase(this,'desabollado')"><span class="fase-icon">🔨</span><div><div class="fase-name">Desabollado</div><div class="fase-desc">Extracción de abolladuras</div></div></div>
+          <div class="fase-opt" onclick="selectFase(this,'plasticos')"><span class="fase-icon">🧱</span><div><div class="fase-name">Reparación de plásticos</div><div class="fase-desc">Soldadura, adhesivos</div></div></div>
+          <div class="fase-opt" onclick="selectFase(this,'enmasillado')"><span class="fase-icon">🪚</span><div><div class="fase-name">Enmasillado</div><div class="fase-desc">Aplicación y lijado</div></div></div>
+          <div class="fase-opt" onclick="selectFase(this,'aparejado')"><span class="fase-icon">🪣</span><div><div class="fase-name">Aparejado</div><div class="fase-desc">Imprimación y aparejo</div></div></div>
+          <div class="fase-opt" onclick="selectFase(this,'enmascarado')"><span class="fase-icon">🎭</span><div><div class="fase-name">Enmascarado</div><div class="fase-desc">Protección de zonas</div></div></div>
+          <div class="fase-opt" onclick="selectFase(this,'limpieza')"><span class="fase-icon">🧹</span><div><div class="fase-name">Limpieza y desengrasado</div><div class="fase-desc">Preparación de superficie</div></div></div>
+          <div class="fase-opt" onclick="selectFase(this,'pintado')"><span class="fase-icon">🎨</span><div><div class="fase-name">Pintado</div><div class="fase-desc">Aplicación de pintura base</div></div></div>
+          <div class="fase-opt" onclick="selectFase(this,'barnizado')"><span class="fase-icon">✨</span><div><div class="fase-name">Barnizado</div><div class="fase-desc">Aplicación de barniz</div></div></div>
+          <div class="fase-opt" onclick="selectFase(this,'correccion')"><span class="fase-icon">🔍</span><div><div class="fase-name">Corrección de defectos</div><div class="fase-desc">Pulido, abrillantado</div></div></div>
         </div>
-
-        <!-- Selector de proceso -->
-        <div id="wrapSelectorProceso">
-          <div class="fases-grid" id="fasesGrid">
-            <div class="fase-opt" onclick="selectFaseMulti(this,'desabollado')"><span class="fase-icon">🔨</span><div><div class="fase-name">Desabollado</div><div class="fase-desc">Extracción de abolladuras</div></div></div>
-            <div class="fase-opt" onclick="selectFaseMulti(this,'plasticos')"><span class="fase-icon">🧱</span><div><div class="fase-name">Reparación de plásticos</div><div class="fase-desc">Soldadura, adhesivos</div></div></div>
-            <div class="fase-opt" onclick="selectFaseMulti(this,'enmasillado')"><span class="fase-icon">🪚</span><div><div class="fase-name">Enmasillado</div><div class="fase-desc">Aplicación y lijado</div></div></div>
-            <div class="fase-opt" onclick="selectFaseMulti(this,'aparejado')"><span class="fase-icon">🪣</span><div><div class="fase-name">Aparejado</div><div class="fase-desc">Imprimación y aparejo</div></div></div>
-            <div class="fase-opt" onclick="selectFaseMulti(this,'enmascarado')"><span class="fase-icon">🎭</span><div><div class="fase-name">Enmascarado</div><div class="fase-desc">Protección de zonas</div></div></div>
-            <div class="fase-opt" onclick="selectFaseMulti(this,'limpieza')"><span class="fase-icon">🧹</span><div><div class="fase-name">Limpieza y desengrasado</div><div class="fase-desc">Preparación de superficie</div></div></div>
-            <div class="fase-opt" onclick="selectFaseMulti(this,'pintado')"><span class="fase-icon">🎨</span><div><div class="fase-name">Pintado</div><div class="fase-desc">Aplicación de pintura base</div></div></div>
-            <div class="fase-opt" onclick="selectFaseMulti(this,'barnizado')"><span class="fase-icon">✨</span><div><div class="fase-name">Barnizado</div><div class="fase-desc">Aplicación de barniz</div></div></div>
-            <div class="fase-opt" onclick="selectFaseMulti(this,'correccion')"><span class="fase-icon">🔍</span><div><div class="fase-name">Corrección de defectos</div><div class="fase-desc">Pulido, abrillantado</div></div></div>
-          </div>
-        </div>
-
-        <div class="flex-end" style="margin-top:16px">
+        <div class="flex-end">
           <button class="btn btn-secondary" onclick="irPaso(1)">← Atrás</button>
-          <button class="btn btn-primary hidden" id="btnIrChecklist" onclick="irPaso(4)">Siguiente → Checklist</button>
+          <button class="btn btn-primary hidden" id="btnSiguienteFase" onclick="irPaso(4)">Siguiente →</button>
         </div>
       </div>
 
-      <!-- PASO 4: CHECKLIST DEL PROCESO ACTUAL -->
+      <!-- PASO 4: CHECKLIST -->
       <div class="card hidden" id="paso4">
-        <div class="card-title" style="justify-content:space-between">
-          <span><span class="step-num">3</span> Checklist — <span id="checklistFaseTitleSpan">proceso</span></span>
-          <span id="checklistProgresoSpan" style="font-size:12px;color:var(--text-dim)"></span>
-        </div>
+        <div class="card-title"><span class="step-num">3</span> Checklist técnico</div>
         <div class="checklist-section">
+          <div class="checklist-header" id="checklistFaseTitle">📋 Checklist de proceso</div>
           <div id="checklistFase"></div>
         </div>
         <label style="margin-top:16px">Observaciones (opcional)</label>
         <textarea id="observaciones" rows="3" placeholder="Dificultades encontradas, materiales usados, notas..."></textarea>
-
-        <div class="flex-end" style="align-items:center;flex-wrap:wrap;gap:8px;margin-top:16px">
-          <button class="btn btn-secondary" onclick="volverASelectorProcesos()">← Procesos</button>
+        <div class="flex-end" style="align-items:center;flex-wrap:wrap;gap:8px">
+          <button class="btn btn-secondary" onclick="irPaso(3)">← Atrás</button>
           <div style="flex:1"></div>
           <div id="fotoHoyWrap" style="display:flex;align-items:center;gap:8px">
             <button class="btn btn-secondary" id="btnFotoHoy" onclick="triggerFotoHoy()" style="display:flex;align-items:center;gap:6px">
@@ -449,15 +434,7 @@ select option{background:var(--surface2);}
             </button>
             <input type="file" accept="image/*" capture="environment" id="fotoHoyInput" style="display:none" onchange="handleFotoHoy(this)">
           </div>
-          <button class="btn btn-primary" id="btnGuardarProceso" onclick="guardarProcesoDia()">✔ Guardar proceso</button>
-        </div>
-        <!-- Botón guardar todo — aparece cuando hay ≥1 proceso guardado -->
-        <div id="wrapGuardarTodo" style="display:none;margin-top:12px;padding:12px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.3);border-radius:var(--radius)">
-          <div style="font-size:12px;color:var(--success);margin-bottom:8px">✅ Tienes <span id="numProcesosGuardados">0</span> proceso(s) guardado(s). ¿Añades otro o terminas?</div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn btn-secondary btn-sm" onclick="volverASelectorProcesos()">+ Añadir otro proceso</button>
-            <button class="btn btn-success" onclick="guardarRegistro()">✔ Enviar todo el registro del día</button>
-          </div>
+          <button class="btn btn-success" id="btnGuardar" onclick="guardarRegistro()">✔ Guardar registro del día</button>
         </div>
       </div>
       <div id="deviceLockBanner" class="device-lock-banner hidden" style="margin-top:-8px;margin-bottom:16px">
@@ -474,6 +451,7 @@ select option{background:var(--surface2);}
           <div class="success-icon">✅</div>
           <div class="success-title">¡Registro guardado!</div>
           <div class="success-sub">Tu trabajo de hoy ha quedado registrado correctamente.</div>
+          <div id="syncStatus" style="display:none;font-size:12px;margin-top:8px;padding:6px 12px;background:rgba(34,197,94,.1);border-radius:var(--radius)">☁️ Sincronizando...</div>
           <button class="btn btn-primary mt-16" onclick="nuevoRegistro()">Registrar otra tarea del día</button>
         </div>
       </div>
@@ -491,6 +469,9 @@ select option{background:var(--surface2);}
 <script>
 // ── STORAGE
 const KEYS = { alumnos:'tl_alumnos', vehiculos:'tl_vehiculos', registros:'tl_registros', session:'tl_session', taller:'tl_taller_loc', gpsActivo:'tl_gps_activo', cierres:'tl_cierres', lockActivo:'tl_lock_activo', fichas:'tl_fichas_piezas' };
+
+// ── GOOGLE APPS SCRIPT URL
+const GAS_URL = 'https://script.google.com/macros/s/AKfycby6WaJjFo_EFe8704dvcaZU8uYPs78-9RdbEBf55WpfncfzXkBYxR3xW2c7RUsMHmtPkw/exec';
 
 // ── DEVICE LOCK — un registro por dispositivo por día
 var DEVICE_KEY = 'tl_device_id';
@@ -553,7 +534,6 @@ var selectedHoras = [];
 var selectedVehiculo = null;
 var selectedPiezasDatos = {};
 var selectedFase = null;
-var procesosHoy = []; // [{fase, checklistState, observaciones, fotoHoy}]
 var checklistState = {};
 
 // ── PIEZAS COMPLETAS
@@ -878,18 +858,20 @@ function loginAlumno() {
   var alumnos = load(KEYS.alumnos) || [];
   var alumno = alumnos.find(function(a){ return a.id === id; });
   if (!alumno) return;
-  // PIN check — solo si el alumno tiene PIN asignado
+  // PIN check
   var pinInput = (document.getElementById('loginPin').value || '').trim();
   var pinErr = document.getElementById('loginPinError');
-  if (pinErr) pinErr.style.display = 'none';
   if (alumno.pin) {
     if (pinInput !== String(alumno.pin)) {
-      if (pinErr) pinErr.style.display = 'block';
+      pinErr.style.display = 'block';
       document.getElementById('loginPin').value = '';
       document.getElementById('loginPin').focus();
       return;
     }
+  } else {
+    if (!pinInput) { alert('Este alumno no tiene PIN. Pide al profesor que le asigne uno.'); return; }
   }
+  if (pinErr) pinErr.style.display = 'none';
   var n = alumno.nombre ? (alumno.nombre + ' ' + (alumno.apellidos||'')) : (alumno.name||'');
 
   var tallerLoc = load(KEYS.taller);
@@ -1235,7 +1217,6 @@ function irPaso(n) {
         selectedPiezasDatos[p.pieza] = {dano: p.dano, estado: 'proceso'};
       });
     }
-    procesosHoy = []; // reset for new day session
   }
   if (n === 4 && !selectedFase) { alert('Selecciona el proceso de reparación.'); return; }
   document.getElementById('paso1').classList.add('hidden');
@@ -1245,14 +1226,7 @@ function irPaso(n) {
   if (mapa[n]) document.getElementById(mapa[n]).classList.remove('hidden');
   var prog = {1:15, 3:55, 4:85};
   document.getElementById('progressBar').style.width = (prog[n]||0) + '%';
-  if (n === 4) {
-    buildChecklist();
-    checkAndShowLockBanner();
-    var titleSpan = document.getElementById('checklistFaseTitleSpan');
-    if (titleSpan) titleSpan.textContent = FASE_NAMES[selectedFase] || selectedFase;
-    var progSpan = document.getElementById('checklistProgresoSpan');
-    if (progSpan) progSpan.textContent = procesosHoy.length > 0 ? ('✅ ' + procesosHoy.length + ' guardado(s)') : '';
-  }
+  if (n === 4) { buildChecklist(); checkAndShowLockBanner(); }
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
@@ -1260,94 +1234,7 @@ function selectFase(el, fase) {
   document.querySelectorAll('.fase-opt').forEach(function(f){ f.classList.remove('selected'); });
   el.classList.add('selected');
   selectedFase = fase;
-  document.getElementById('btnSiguienteFase') && document.getElementById('btnSiguienteFase').classList.remove('hidden');
-}
-
-function selectFaseMulti(el, fase) {
-  // Mark selected visually
-  document.querySelectorAll('#fasesGrid .fase-opt').forEach(function(f){ f.classList.remove('selected'); });
-  el.classList.add('selected');
-  selectedFase = fase;
-  var btn = document.getElementById('btnIrChecklist');
-  if (btn) btn.classList.remove('hidden');
-}
-
-function volverASelectorProcesos() {
-  // Save current checklist state before going back
-  document.getElementById('paso4').classList.add('hidden');
-  document.getElementById('paso3').classList.remove('hidden');
-  // Reset for next proceso
-  selectedFase = null;
-  checklistState = {};
-  fotoHoy = null;
-  document.querySelectorAll('#fasesGrid .fase-opt').forEach(function(f){ f.classList.remove('selected'); });
-  var btn = document.getElementById('btnIrChecklist');
-  if (btn) btn.classList.add('hidden');
-  var ob = document.getElementById('observaciones'); if (ob) ob.value = '';
-  var lbl = document.getElementById('btnFotoHoyLabel'); if (lbl) lbl.textContent = 'Foto del estado hoy';
-  var btnF = document.getElementById('btnFotoHoy'); if (btnF){ btnF.style.borderColor=''; btnF.style.color=''; }
-  window.scrollTo({top:0, behavior:'smooth'});
-}
-
-function guardarProcesoDia() {
-  if (!selectedFase) { alert('Selecciona un proceso.'); return; }
-  var obs = document.getElementById('observaciones') ? document.getElementById('observaciones').value : '';
-  procesosHoy.push({
-    fase: selectedFase,
-    checklistState: Object.assign({}, checklistState),
-    observaciones: obs,
-    fotoHoy: fotoHoy
-  });
-  // Update badge list
-  actualizarListaProcesos();
-  // Show wrap guardar todo
-  var wrap = document.getElementById('wrapGuardarTodo');
-  var num = document.getElementById('numProcesosGuardados');
-  if (wrap) wrap.style.display = '';
-  if (num) num.textContent = procesosHoy.length;
-  // Grey out used fase in grid
-  document.querySelectorAll('#fasesGrid .fase-opt').forEach(function(el) {
-    var onclick = el.getAttribute('onclick') || '';
-    var m = onclick.match(/'([^']+)'\)$/);
-    if (m && m[1] === selectedFase) {
-      el.style.opacity = '0.4';
-      el.style.pointerEvents = 'none';
-    }
-  });
-  volverASelectorProcesos();
-}
-
-function actualizarListaProcesos() {
-  var wrap = document.getElementById('procesosAñadidos');
-  var lista = document.getElementById('listaProcesosHoy');
-  if (!wrap || !lista) return;
-  wrap.style.display = procesosHoy.length > 0 ? '' : 'none';
-  lista.innerHTML = procesosHoy.map(function(p, i) {
-    var nombre = FASE_NAMES[p.fase] || p.fase;
-    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.3);border-radius:var(--radius);margin-bottom:6px">' +
-      '<span style="font-size:13px;font-weight:600">✅ ' + nombre + '</span>' +
-      '<button class="btn btn-danger btn-sm" style="padding:2px 8px;font-size:11px" onclick="eliminarProcesoDia(' + i + ')">✕</button>' +
-    '</div>';
-  }).join('');
-}
-
-function eliminarProcesoDia(idx) {
-  var fase = procesosHoy[idx].fase;
-  procesosHoy.splice(idx, 1);
-  // Re-enable the fase in grid
-  document.querySelectorAll('#fasesGrid .fase-opt').forEach(function(el) {
-    var onclick = el.getAttribute('onclick') || '';
-    var m = onclick.match(/'([^']+)'\)$/);
-    if (m && m[1] === fase) {
-      el.style.opacity = '';
-      el.style.pointerEvents = '';
-    }
-  });
-  actualizarListaProcesos();
-  var wrap = document.getElementById('wrapGuardarTodo');
-  var num = document.getElementById('numProcesosGuardados');
-  if (wrap) wrap.style.display = procesosHoy.length > 0 ? '' : 'none';
-  if (num) num.textContent = procesosHoy.length;
+  document.getElementById('btnSiguienteFase').classList.remove('hidden');
 }
 
 // ── CHECKLIST
@@ -2504,9 +2391,9 @@ function handleFotoHoy(input) {
 }
 
 function guardarRegistro() {
-  if (procesosHoy.length === 0) { alert('Añade al menos un proceso antes de enviar.'); return; }
+  var allBoolKeys = Object.keys(checklistState).filter(function(k){ return typeof checklistState[k] === 'boolean'; });
+  var allChecked = allBoolKeys.filter(function(k){ return checklistState[k] === true; }).length;
 
-  // ── Update ficha de piezas
   var fichas = load(KEYS.fichas) || {};
   var fichaKey = getFichaKey(currentUser.id, selectedVehiculo.id);
   var fichaExistente = fichas[fichaKey] || null;
@@ -2528,37 +2415,31 @@ function guardarRegistro() {
     return {pieza:p.pieza, dano:p.dano, estado:'proceso'};
   });
 
-  // ── Save one registro per proceso
+  var registro = {
+    id: 'r_' + Date.now(),
+    alumnoId: currentUser.id,
+    alumnoName: currentUser.name,
+    vehiculoId: selectedVehiculo.id,
+    vehiculoName: selectedVehiculo.name,
+    piezas: todasPiezasFicha,
+    horas: selectedHoras.slice(),
+    fase: selectedFase,
+    seguridad: {checked: allChecked, total: allBoolKeys.length},
+    tecnico: {checked: 0, total: 0},
+    checklistData: checklistState,
+    observaciones: document.getElementById('observaciones').value,
+    fotoHoy: fotoHoy,
+    fecha: new Date().toLocaleDateString('es-ES'),
+    fechaISO: new Date().toISOString()
+  };
+
   var registros = load(KEYS.registros) || [];
-  var fecha = new Date().toLocaleDateString('es-ES');
-  var fechaISO = new Date().toISOString();
-  var baseId = Date.now();
-
-  procesosHoy.forEach(function(proc, i) {
-    var allBoolKeys = Object.keys(proc.checklistState).filter(function(k){ return typeof proc.checklistState[k] === 'boolean'; });
-    var allChecked = allBoolKeys.filter(function(k){ return proc.checklistState[k] === true; }).length;
-    var registro = {
-      id: 'r_' + (baseId + i),
-      alumnoId: currentUser.id,
-      alumnoName: currentUser.name,
-      vehiculoId: selectedVehiculo.id,
-      vehiculoName: selectedVehiculo.name,
-      piezas: todasPiezasFicha,
-      horas: selectedHoras.slice(),
-      fase: proc.fase,
-      seguridad: {checked: allChecked, total: allBoolKeys.length},
-      tecnico: {checked: 0, total: 0},
-      checklistData: proc.checklistState,
-      observaciones: proc.observaciones,
-      fotoHoy: proc.fotoHoy,
-      fecha: fecha,
-      fechaISO: fechaISO
-    };
-    registros.push(registro);
-  });
-
+  registros.push(registro);
   save(KEYS.registros, registros);
   stampDeviceLock(currentUser.id);
+  // Push to cloud
+  syncToCloud('registros', registros);
+  syncToCloud('fichas', load(KEYS.fichas));
 
   ['paso1','paso3','paso4'].forEach(function(p){ document.getElementById(p).classList.add('hidden'); });
   document.getElementById('successMsg').classList.remove('hidden');
@@ -2572,7 +2453,7 @@ function nuevoRegistro() {
 }
 
 function resetRegistro() {
-  selectedVehiculo = null; selectedPiezasDatos = {}; selectedHoras = []; selectedFase = null; checklistState = {}; procesosHoy = [];
+  selectedVehiculo = null; selectedPiezasDatos = {}; selectedHoras = []; selectedFase = null; checklistState = {};
   fotoHoy = null;
   var lbl = document.getElementById('btnFotoHoyLabel'); if(lbl) lbl.textContent = 'Foto del estado hoy';
   var btn = document.getElementById('btnFotoHoy'); if(btn){ btn.style.borderColor=''; btn.style.color=''; }
@@ -2852,6 +2733,7 @@ function addAlumno() {
   if (pin && !/^[0-9]{4}$/.test(pin)) { alert('El PIN debe tener exactamente 4 dígitos numéricos.'); return; }
   alumnos.push({id:'a_'+Date.now(), nombre:nombre, apellidos:apellidos, curso:curso, name:nombre+' '+apellidos, pin:pin||null});
   save(KEYS.alumnos, alumnos);
+  syncToCloud('alumnos', alumnos);
   populateLoginSelect();
   renderAdmin();
 }
@@ -2882,8 +2764,10 @@ function saveEditAlumno() {
   var pinData = pin ? {pin:pin} : {};
   if (idx>=0) alumnos[idx] = Object.assign({}, alumnos[idx], {nombre:nombre, apellidos:apellidos, curso:curso, name:nombre+' '+apellidos}, pinData);
   save(KEYS.alumnos, alumnos);
+  syncToCloud('alumnos', alumnos);
   var registros = (load(KEYS.registros)||[]).map(function(r){ return r.alumnoId===id ? Object.assign({},r,{alumnoName:nombre+' '+apellidos}) : r; });
   save(KEYS.registros, registros);
+  syncToCloud('registros', registros);
   populateLoginSelect();
   renderAdmin();
 }
@@ -2964,6 +2848,7 @@ function addVehiculo() {
   var vehiculos = load(KEYS.vehiculos) || [];
   vehiculos.push({id:'v_'+Date.now(), name:name, piezas:piezas});
   save(KEYS.vehiculos, vehiculos);
+  syncToCloud('vehiculos', vehiculos);
   populateVehiculos();
   renderAdmin();
 }
@@ -3708,6 +3593,7 @@ function cerrarProceso(alumnoId, vId, fase) {
   cierres[cierreKey] = { ceEvals: Object.assign({}, tmp), nota: nota, fecha: new Date().toLocaleDateString('es-ES') };
   delete cierres[tmpKey];
   save(KEYS.cierres, cierres);
+  syncToCloud('cierres', cierres);
   renderTabAlumno(document.getElementById('adminContentWrap'), alumnoId);
 }
 
@@ -3782,6 +3668,53 @@ function validarRegistro(registroId, estado, alumnoId) {
 }
 
 // ── EXPORT CSV
+// ── Google Sheets Sync ───────────────────────────────────────────────────────
+
+function gasGet(table, callback) {
+  var url = GAS_URL + '?action=getAll&table=' + table;
+  fetch(url)
+    .then(function(r){ return r.json(); })
+    .then(function(res){ if (res.ok) callback(res.data); else console.warn('gasGet error:', res.error); })
+    .catch(function(e){ console.warn('gasGet fetch error:', e); });
+}
+
+function gasPost(table, data, callback) {
+  fetch(GAS_URL + '?action=save&table=' + table, {
+    method: 'POST',
+    body: JSON.stringify(data)
+  })
+    .then(function(r){ return r.json(); })
+    .then(function(res){ if (callback) callback(res.ok); })
+    .catch(function(e){ console.warn('gasPost error:', e); });
+}
+
+function syncToCloud(table, data) {
+  gasPost(table, data, null);
+}
+
+function syncAllFromCloud(callback) {
+  var tables = ['alumnos','vehiculos','registros','fichas','cierres'];
+  var pending = tables.length;
+  tables.forEach(function(t) {
+    gasGet(t, function(data) {
+      if (data !== null && data !== undefined) {
+        save(KEYS[t], data);
+      }
+      pending--;
+      if (pending === 0 && callback) callback();
+    });
+  });
+}
+
+function showSyncStatus(msg, ok) {
+  var el = document.getElementById('syncStatus');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = ok ? 'var(--success)' : '#f97316';
+  el.style.display = 'block';
+  setTimeout(function(){ el.style.display = 'none'; }, 3000);
+}
+
 function exportCSVAlumno(alumnoId) {
   var registros = (load(KEYS.registros)||[]).filter(function(r){ return !alumnoId || r.alumnoId===alumnoId; });
   if (registros.length===0) { alert('No hay registros para exportar.'); return; }
