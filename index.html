@@ -471,7 +471,7 @@ select option{background:var(--surface2);}
 const KEYS = { alumnos:'tl_alumnos', vehiculos:'tl_vehiculos', registros:'tl_registros', session:'tl_session', taller:'tl_taller_loc', gpsActivo:'tl_gps_activo', cierres:'tl_cierres', lockActivo:'tl_lock_activo', fichas:'tl_fichas_piezas' };
 
 // ── GOOGLE APPS SCRIPT URL
-const GAS_URL = 'https://script.google.com/macros/s/AKfycby6WaJjFo_EFe8704dvcaZU8uYPs78-9RdbEBf55WpfncfzXkBYxR3xW2c7RUsMHmtPkw/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbyhBqzJkdATfoI2OOzm51SRlkAOD-Y2vAHYEst98zNOT0vh5CpCaI8RQkutWsigz5IKCg/exec';
 
 // ── DEVICE LOCK — un registro por dispositivo por día
 var DEVICE_KEY = 'tl_device_id';
@@ -2774,8 +2774,12 @@ function saveEditAlumno() {
 
 function deleteAlumno(id) {
   if (!confirm('¿Dar de baja a este alumno? Se eliminarán también sus registros.')) return;
-  save(KEYS.alumnos, (load(KEYS.alumnos)||[]).filter(function(a){ return a.id!==id; }));
-  save(KEYS.registros, (load(KEYS.registros)||[]).filter(function(r){ return r.alumnoId!==id; }));
+  var newAlumnos = (load(KEYS.alumnos)||[]).filter(function(a){ return a.id!==id; });
+  var newRegistros = (load(KEYS.registros)||[]).filter(function(r){ return r.alumnoId!==id; });
+  save(KEYS.alumnos, newAlumnos);
+  save(KEYS.registros, newRegistros);
+  syncToCloud('alumnos', newAlumnos);
+  syncToCloud('registros', newRegistros);
   populateLoginSelect();
   currentAdminTab = 'gestion-alumnos';
   renderAdmin();
@@ -3679,17 +3683,33 @@ function gasGet(table, callback) {
 }
 
 function gasPost(table, data, callback) {
+  console.log('📤 Enviando POST a Google Apps Script...', { table, dataSize: JSON.stringify(data).length });
   fetch(GAS_URL + '?action=save&table=' + table, {
     method: 'POST',
     body: JSON.stringify(data)
   })
-    .then(function(r){ return r.json(); })
-    .then(function(res){ if (callback) callback(res.ok); })
-    .catch(function(e){ console.warn('gasPost error:', e); });
+    .then(function(r){ 
+      console.log('📥 Respuesta recibida:', r.status, r.statusText);
+      return r.json(); 
+    })
+    .then(function(res){ 
+      console.log('📋 Respuesta JSON:', res);
+      if (callback) callback(res.ok); 
+    })
+    .catch(function(e){ 
+      console.error('❌ Error en gasPost:', e); 
+    });
 }
 
 function syncToCloud(table, data) {
-  gasPost(table, data, null);
+  console.log('🔄 Sincronizando a Google Sheets...', table, data);
+  gasPost(table, data, function(ok) {
+    if (ok) {
+      console.log('✅ Sincronización exitosa para tabla:', table);
+    } else {
+      console.warn('⚠️ Error en sincronización para tabla:', table);
+    }
+  });
 }
 
 function syncAllFromCloud(callback) {
