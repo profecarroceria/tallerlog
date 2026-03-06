@@ -2850,7 +2850,7 @@ function addVehiculo() {
   var piezas = getPiezasSelected('vPiezas');
   if (!name) { alert('Escribe la descripción.'); return; }
   var vehiculos = load(KEYS.vehiculos) || [];
-  vehiculos.push({id:'v_'+Date.now(), name:name, piezas:piezas});
+  vehiculos.push({id:'v_'+Date.now(), name:name, piezas:piezas.join(', ')});
   save(KEYS.vehiculos, vehiculos);
   syncToCloud('vehiculos', vehiculos);
   populateVehiculos();
@@ -2865,9 +2865,10 @@ function editVehiculo(id) {
   renderTabVehiculos(document.getElementById('adminContentWrap'));
   document.getElementById('eVehiculoId').value = v.id;
   document.getElementById('eVName').value = v.name;
+  var piezasArray = typeof v.piezas === 'string' ? v.piezas.split(', ') : (v.piezas||[]);
   var epGrid = document.getElementById('eVPiezas');
   epGrid.innerHTML = TODAS_PIEZAS.map(function(p){
-    var chk = (v.piezas||[]).indexOf(p)>=0 ? 'checked' : '';
+    var chk = piezasArray.indexOf(p)>=0 ? 'checked' : '';
     return '<label class="pieza-assign-item"><input type="checkbox" value="' + p + '" ' + chk + '> ' + p + '</label>';
   }).join('');
   document.getElementById('fEditVehiculo').classList.remove('hidden');
@@ -2880,7 +2881,7 @@ function saveEditVehiculo() {
   if (!name) { alert('Escribe la descripción.'); return; }
   var vehiculos = load(KEYS.vehiculos) || [];
   var idx = vehiculos.findIndex(function(v){ return v.id===id; });
-  if (idx>=0) vehiculos[idx] = Object.assign({}, vehiculos[idx], {name:name, piezas:piezas});
+  if (idx>=0) vehiculos[idx] = Object.assign({}, vehiculos[idx], {name:name, piezas:piezas.join(', ')});
   save(KEYS.vehiculos, vehiculos);
   populateVehiculos();
   renderAdmin();
