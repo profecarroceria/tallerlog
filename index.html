@@ -2805,7 +2805,7 @@ function renderTabVehiculos(wrap) {
     rows += '<tr>' +
       '<td><strong style="font-size:13px">' + v.name + '</strong></td>' +
       '<td style="font-size:11px;color:var(--text-dim)">' + (alumnosVeh.length ? alumnosVeh.join(', ') : '<span style="color:var(--text-dim)">Sin registros</span>') + '</td>' +
-      '<td style="font-size:11px;color:var(--text-dim)">' + (v.piezas||[]).join(', ') + '</td>' +
+      '<td style="font-size:11px;color:var(--text-dim)">' + (typeof v.piezas === 'string' ? v.piezas : (v.piezas||[]).join(', ')) + '</td>' +
       '<td><span class="tag tag-horas">' + hrs + 'h</span></td>' +
       '<td style="display:flex;gap:6px;flex-wrap:wrap">' +
         '<button class="btn btn-secondary btn-sm" onclick="editVehiculo(\'' + v.id + '\')">✏️ Editar</button>' +
