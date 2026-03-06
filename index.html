@@ -2883,13 +2883,16 @@ function saveEditVehiculo() {
   var idx = vehiculos.findIndex(function(v){ return v.id===id; });
   if (idx>=0) vehiculos[idx] = Object.assign({}, vehiculos[idx], {name:name, piezas:piezas.join(', ')});
   save(KEYS.vehiculos, vehiculos);
+  syncToCloud('vehiculos', vehiculos);
   populateVehiculos();
   renderAdmin();
 }
 
 function deleteVehiculo(id) {
   if (!confirm('¿Eliminar este vehículo?')) return;
-  save(KEYS.vehiculos, (load(KEYS.vehiculos)||[]).filter(function(v){ return v.id!==id; }));
+  var newVehiculos = (load(KEYS.vehiculos)||[]).filter(function(v){ return v.id!==id; });
+  save(KEYS.vehiculos, newVehiculos);
+  syncToCloud('vehiculos', newVehiculos);
   populateVehiculos();
   renderAdmin();
 }
