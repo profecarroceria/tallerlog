@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TallerLog — Carrocería FP</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#f97316">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0f1114;--surface:#1a1e24;--surface2:#222831;--border:#2e343d;--accent:#f97316;--accent2:#fbbf24;--text:#e8eaed;--text-dim:#8a9099;--success:#22c55e;--danger:#ef4444;--radius:8px;}
@@ -2805,7 +2809,7 @@ function renderTabVehiculos(wrap) {
     rows += '<tr>' +
       '<td><strong style="font-size:13px">' + v.name + '</strong></td>' +
       '<td style="font-size:11px;color:var(--text-dim)">' + (alumnosVeh.length ? alumnosVeh.join(', ') : '<span style="color:var(--text-dim)">Sin registros</span>') + '</td>' +
-      '<td style="font-size:11px;color:var(--text-dim)">' + (v.piezas||[]).join(', ') + '</td>' +
+      '<td style="font-size:11px;color:var(--text-dim)">' + (typeof v.piezas === 'string' ? v.piezas : (v.piezas||[]).join(', ')) + '</td>' +
       '<td><span class="tag tag-horas">' + hrs + 'h</span></td>' +
       '<td style="display:flex;gap:6px;flex-wrap:wrap">' +
         '<button class="btn btn-secondary btn-sm" onclick="editVehiculo(\'' + v.id + '\')">✏️ Editar</button>' +
@@ -2883,13 +2887,16 @@ function saveEditVehiculo() {
   var idx = vehiculos.findIndex(function(v){ return v.id===id; });
   if (idx>=0) vehiculos[idx] = Object.assign({}, vehiculos[idx], {name:name, piezas:piezas.join(', ')});
   save(KEYS.vehiculos, vehiculos);
+  syncToCloud('vehiculos', vehiculos);
   populateVehiculos();
   renderAdmin();
 }
 
 function deleteVehiculo(id) {
   if (!confirm('¿Eliminar este vehículo?')) return;
-  save(KEYS.vehiculos, (load(KEYS.vehiculos)||[]).filter(function(v){ return v.id!==id; }));
+  var newVehiculos = (load(KEYS.vehiculos)||[]).filter(function(v){ return v.id!==id; });
+  save(KEYS.vehiculos, newVehiculos);
+  syncToCloud('vehiculos', newVehiculos);
   populateVehiculos();
   renderAdmin();
 }
