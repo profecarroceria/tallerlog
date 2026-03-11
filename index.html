@@ -1,159 +1,221 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TallerLog — Carrocería FP</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#0f1114;--surface:#1a1e24;--surface2:#222831;--border:#2e343d;--accent:#f97316;--accent2:#fbbf24;--text:#e8eaed;--text-dim:#8a9099;--success:#22c55e;--danger:#ef4444;--radius:8px;}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;overflow-x:hidden;}
-header{background:var(--surface);border-bottom:2px solid var(--accent);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
-.logo{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;color:var(--accent);letter-spacing:-0.5px;text-transform:uppercase;}
-.nav-tabs{display:flex;background:var(--surface2);padding:4px;gap:4px;margin:15px;border-radius:var(--radius);border:1px solid var(--border);}
-.nav-tab{flex:1;padding:10px;text-align:center;border-radius:6px;cursor:pointer;font-weight:600;font-size:13px;color:var(--text-dim);transition:0.2s;}
-.nav-tab.active{background:var(--accent);color:white;}
-.section{display:none;padding:0 15px 100px;}
-.section.active{display:block;}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:15px;}
-.field-label{display:block;font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;letter-spacing:0.5px;}
-input,select,textarea{width:100%;background:var(--surface2);border:1px solid var(--border);color:white;padding:12px;border-radius:6px;font-family:inherit;font-size:15px;margin-bottom:15px;}
-.btn{width:100%;padding:14px;border-radius:6px;border:none;font-weight:700;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:0.2s;}
-.btn-primary{background:var(--accent);color:white;}
-.btn-success{background:var(--success);color:white;}
-.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text);}
-.step-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));gap:10px;margin-bottom:20px;}
-.step-item{background:var(--surface2);border:1px solid var(--border);padding:15px;border-radius:var(--radius);text-align:center;cursor:pointer;transition:0.2s;}
-.step-item.active{border-color:var(--accent);background:rgba(249,115,22,0.1);color:var(--accent);}
-.badge{padding:4px 8px;border-radius:4px;font-size:11px;font-weight:700;text-transform:uppercase;}
-.badge-pending{background:rgba(251,181,36,0.2);color:var(--accent2);}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TallerLog v3.0 — IES Gregorio Prieto</title>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f1114; --surface: #1a1e24; --surface2: #222831;
+            --border: #2e343d; --accent: #f97316; --text: #e8eaed;
+            --text-dim: #8a9099; --success: #22c55e; --radius: 12px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Barlow', sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; }
+        
+        /* HEADER & NAV */
+        header { background: var(--surface); padding: 15px 20px; border-bottom: 2px solid var(--accent); position: sticky; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 24px; color: var(--accent); text-transform: uppercase; }
+        
+        .nav-tabs { display: flex; gap: 8px; padding: 12px; background: var(--bg); }
+        .nav-tab { flex: 1; padding: 12px; text-align: center; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .nav-tab.active { background: var(--accent); border-color: var(--accent); color: white; }
+
+        /* CARDS & FORMS */
+        .container { padding: 15px; max-width: 600px; margin: 0 auto; }
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 20px; }
+        h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; margin-bottom: 15px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        label { display: block; font-size: 12px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; margin-bottom: 8px; }
+        input, select, textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border); color: white; padding: 14px; border-radius: 8px; font-family: inherit; font-size: 16px; margin-bottom: 15px; }
+        
+        /* PIEZAS Y DAÑOS */
+        .grid-selection { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
+        .item-select { background: var(--surface2); border: 1px solid var(--border); padding: 12px; border-radius: 8px; text-align: center; font-size: 14px; cursor: pointer; }
+        .item-select.selected { border-color: var(--accent); background: rgba(249, 115, 22, 0.15); color: var(--accent); font-weight: 600; }
+
+        .btn { width: 100%; padding: 16px; border-radius: 8px; border: none; font-weight: 700; font-size: 16px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-success { background: var(--success); color: white; margin-top: 10px; }
+
+        /* DASHBOARD / HISTORIAL */
+        .log-item { background: var(--surface); border-left: 4px solid var(--accent); padding: 15px; margin-bottom: 12px; border-radius: 0 var(--radius) var(--radius) 0; }
+        .log-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .tag { font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; background: var(--surface2); color: var(--accent2); }
+
+        .section { display: none; }
+        .section.active { display: block; }
+    </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">TallerLog <span style="color:white;font-weight:400;font-size:14px;">GP</span></div>
+    <div class="logo">TallerLog <span style="color:white; font-size:14px; font-weight:400;">IES GP</span></div>
+    <div id="status-icon" style="color: var(--text-dim);">● Online</div>
 </header>
 
 <div class="nav-tabs">
-  <div class="nav-tab active" onclick="showSection('form')">NUEVO</div>
-  <div class="nav-tab" onclick="showSection('list')">HISTORIAL</div>
+    <div class="nav-tab active" onclick="showSection('form')">REGISTRO</div>
+    <div class="nav-tab" onclick="showSection('dash')">DASHBOARD</div>
 </div>
 
-<div id="section-form" class="section active">
-  <div class="card">
-    <label class="field-label">Información General</label>
-    <input type="text" id="alumnoName" placeholder="Nombre del Alumno">
-    <input type="text" id="vehiculoName" placeholder="Vehículo / Matrícula">
-    
-    <label class="field-label">Fase del Proceso</label>
-    <select id="faseProceso">
-      <option value="Desabollado">Desabollado</option>
-      <option value="Lijado/Preparación">Lijado/Preparación</option>
-      <option value="Enmascarado">Enmascarado</option>
-      <option value="Pintura">Pintura</option>
-      <option value="Montaje Final">Montaje Final</option>
-    </select>
-  </div>
+<div class="container">
+    <div id="section-form" class="section active">
+        <div class="card">
+            <h3>Identificación</h3>
+            <label>Alumno</label>
+            <input type="text" id="alumnoName" placeholder="Tu nombre y apellidos">
+            <label>Vehículo / Orden de Trabajo</label>
+            <input type="text" id="vehiculoName" placeholder="Matrícula o Modelo">
+        </div>
 
-  <div class="card">
-    <label class="field-label">Observaciones del Trabajo</label>
-    <textarea id="observaciones" rows="3" placeholder="Detalla materiales usados, granos de lija, etc."></textarea>
-  </div>
+        <div class="card">
+            <h3>Proceso de Carrocería</h3>
+            <label>Fase Actual</label>
+            <select id="faseProceso">
+                <option value="Desabollado / Estirado">Desabollado / Estirado</option>
+                <option value="Lijado Masillas">Lijado Masillas</option>
+                <option value="Aplicación Imprimación">Aplicación Imprimación</option>
+                <option value="Lijado Aparejo">Lijado Aparejo</option>
+                <option value="Enmascarado">Enmascarado</option>
+                <option value="Pintura / Barniz">Pintura / Barniz</option>
+                <option value="Montaje / Pulido">Montaje / Pulido</option>
+            </select>
 
-  <button class="btn btn-success" onclick="finalizeRegistro()">FINALIZAR Y ENVIAR AL EXCEL</button>
-</div>
+            <label>Piezas Intervenidas</label>
+            <div class="grid-selection" id="piezas-grid">
+                <div class="item-select" onclick="toggleSelection(this, 'pieza')">Capó</div>
+                <div class="item-select" onclick="toggleSelection(this, 'pieza')">Aleta Del. Izq.</div>
+                <div class="item-select" onclick="toggleSelection(this, 'pieza')">Aleta Del. Der.</div>
+                <div class="item-select" onclick="toggleSelection(this, 'pieza')">Puerta Del. Izq.</div>
+                <div class="item-select" onclick="toggleSelection(this, 'pieza')">Puerta Del. Der.</div>
+                <div class="item-select" onclick="toggleSelection(this, 'pieza')">Paragolpes Del.</div>
+                <div class="item-select" onclick="toggleSelection(this, 'pieza')">Paragolpes Tras.</div>
+                <div class="item-select" onclick="toggleSelection(this, 'pieza')">Techo</div>
+            </div>
+        </div>
 
-<div id="section-list" class="section">
-  <div id="list-container"></div>
+        <div class="card">
+            <h3>Notas Técnicas</h3>
+            <textarea id="observaciones" rows="4" placeholder="Indica materiales usados (Grit de lija, tipo de masilla, etc.)"></textarea>
+            <button class="btn btn-primary" onclick="enviarAlProfesor()">FINALIZAR TRABAJO</button>
+        </div>
+    </div>
+
+    <div id="section-dash" class="section">
+        <div class="card">
+            <h3>Resumen de Control</h3>
+            <div id="stats-summary" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div style="text-align:center; padding:10px; background:var(--bg); border-radius:8px;">
+                    <small>TOTAL</small><br><strong id="count-total" style="font-size:20px; color:var(--accent);">0</strong>
+                </div>
+                <div style="text-align:center; padding:10px; background:var(--bg); border-radius:8px;">
+                    <small>HOY</small><br><strong id="count-today" style="font-size:20px; color:var(--success);">0</strong>
+                </div>
+            </div>
+        </div>
+        <div id="history-container"></div>
+    </div>
 </div>
 
 <script>
-// --- 1. CONFIGURACIÓN DE TU GOOGLE SHEETS ---
+// --- CONFIGURACIÓN CRÍTICA ---
 const URL_GOOGLE_SHEETS = "https://script.google.com/macros/s/AKfycbzjX7TB6WTm9OwOx35VrsrUF6JJijoIxT7JrWzy373khzAKsSF6ASnyDxGTG2JQ-X2E/exec";
 
-// --- 2. FUNCIÓN DE ENVÍO ---
-async function syncToCloud(registro) {
-  try {
-    await fetch(URL_GOOGLE_SHEETS, {
-      method: 'POST',
-      mode: 'no-cors', 
-      cache: 'no-cache',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(registro)
-    });
-    console.log("Datos enviados correctamente.");
-    return true;
-  } catch (error) {
-    console.error("Error al enviar:", error);
-    return false;
-  }
+// --- MOTOR DE ENVÍO ---
+async function syncToCloud(datos) {
+    try {
+        await fetch(URL_GOOGLE_SHEETS, {
+            method: 'POST',
+            mode: 'no-cors',
+            cache: 'no-cache',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(datos)
+        });
+        return true;
+    } catch (e) {
+        console.error("Error de red:", e);
+        return false;
+    }
 }
 
-// --- 3. LÓGICA DE LA APP ---
-let currentRegistro = {};
-
+// --- LÓGICA DE INTERFAZ ---
 function showSection(id) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('section-' + id).classList.add('active');
-  event.currentTarget.classList.add('active');
-  if(id === 'list') renderList();
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('section-' + id).classList.add('active');
+    event.currentTarget.classList.add('active');
+    if(id === 'dash') renderDashboard();
 }
 
-function finalizeRegistro() {
-  const alumno = document.getElementById('alumnoName').value;
-  const vehiculo = document.getElementById('vehiculoName').value;
-  const fase = document.getElementById('faseProceso').value;
-  const obs = document.getElementById('observaciones').value;
-
-  if(!alumno || !vehiculo) {
-    alert("Por favor, rellena nombre y vehículo.");
-    return;
-  }
-
-  const registro = {
-    fecha: new Date().toLocaleString(),
-    alumnoName: alumno,
-    vehiculoName: vehiculo,
-    fase: fase,
-    observaciones: obs,
-    id: 'ID-' + Date.now()
-  };
-
-  // Guardar en el historial local del móvil
-  const localData = JSON.parse(localStorage.getItem('taller_logs') || '[]');
-  localData.push(registro);
-  localStorage.setItem('taller_logs', JSON.stringify(localData));
-
-  // ENVIAR AL EXCEL
-  syncToCloud(registro);
-
-  alert("¡Registro enviado al profesor!");
-  
-  // Limpiar formulario
-  document.getElementById('alumnoName').value = "";
-  document.getElementById('vehiculoName').value = "";
-  document.getElementById('observaciones').value = "";
-  showSection('list');
+function toggleSelection(el, type) {
+    el.classList.toggle('selected');
 }
 
-function renderList() {
-  const container = document.getElementById('list-container');
-  const data = JSON.parse(localStorage.getItem('taller_logs') || '[]');
-  container.innerHTML = data.reverse().map(reg => `
-    <div class="card">
-      <div style="display:flex; justify:space-between; margin-bottom:10px;">
-        <span style="font-weight:700; color:var(--accent);">${reg.vehiculoName}</span>
-        <span style="font-size:12px; color:var(--text-dim);">${reg.fecha}</span>
-      </div>
-      <div style="font-size:14px; margin-bottom:5px;"><strong>Alumno:</strong> ${reg.alumnoName}</div>
-      <div style="font-size:14px; margin-bottom:5px;"><strong>Fase:</strong> ${reg.fase}</div>
-      <div style="font-size:13px; color:var(--text-dim); font-style:italic;">${reg.observaciones}</div>
-    </div>
-  `).join('');
+function enviarAlProfesor() {
+    const alumno = document.getElementById('alumnoName').value;
+    const vehiculo = document.getElementById('vehiculoName').value;
+    const fase = document.getElementById('faseProceso').value;
+    const obs = document.getElementById('observaciones').value;
+    
+    // Recoger piezas seleccionadas
+    const piezas = [];
+    document.querySelectorAll('#piezas-grid .selected').forEach(el => piezas.push(el.innerText));
+
+    if(!alumno || !vehiculo) {
+        alert("¡Atención! Debes indicar tu nombre y el vehículo.");
+        return;
+    }
+
+    const registro = {
+        id: 'REF-' + Date.now(),
+        fecha: new Date().toLocaleString('es-ES'),
+        alumnoName: alumno,
+        vehiculoName: vehiculo,
+        fase: fase,
+        piezas: piezas.join(", "),
+        observaciones: obs
+    };
+
+    // Guardar copia local por seguridad
+    const historial = JSON.parse(localStorage.getItem('taller_v3_data') || '[]');
+    historial.push(registro);
+    localStorage.setItem('taller_v3_data', JSON.stringify(historial));
+
+    // DISPARO AL EXCEL
+    syncToCloud(registro);
+
+    alert("✅ TRABAJO REGISTRADO CORRECTAMENTE.\n\nSe ha enviado al Google Sheets del profesor.");
+    
+    // Limpiar y saltar al dash
+    document.getElementById('vehiculoName').value = "";
+    document.getElementById('observaciones').value = "";
+    document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
+    showSection('dash');
 }
+
+function renderDashboard() {
+    const container = document.getElementById('history-container');
+    const data = JSON.parse(localStorage.getItem('taller_v3_data') || '[]');
+    
+    document.getElementById('count-total').innerText = data.length;
+    
+    container.innerHTML = data.reverse().map(reg => `
+        <div class="log-item">
+            <div class="log-header">
+                <strong>${reg.vehiculoName}</strong>
+                <span style="font-size:11px; color:var(--text-dim);">${reg.fecha}</span>
+            </div>
+            <div style="font-size:14px; margin-bottom:5px;">${reg.alumnoName}</div>
+            <div style="font-size:12px; color:var(--accent); font-weight:600;">${reg.fase}</div>
+            <div style="font-size:12px; color:var(--text-dim); margin-top:5px;">Piezas: ${reg.piezas}</div>
+        </div>
+    `).join('');
+}
+
+// Inicialización
+window.onload = () => { if(localStorage.getItem('taller_v3_data')) renderDashboard(); };
 </script>
 
 </body>
