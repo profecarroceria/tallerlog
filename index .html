@@ -471,7 +471,7 @@ select option{background:var(--surface2);}
 const KEYS = { alumnos:'tl_alumnos', vehiculos:'tl_vehiculos', registros:'tl_registros', session:'tl_session', taller:'tl_taller_loc', gpsActivo:'tl_gps_activo', cierres:'tl_cierres', lockActivo:'tl_lock_activo', fichas:'tl_fichas_piezas' };
 
 // ── GOOGLE APPS SCRIPT URL
-const URL_ALUMNO_SISTEMA = "https://script.google.com/macros/s/AKfycbzfmw1wJ-XoAU4kyAaXS5xonAKCr4dUBQj_h1Y09OjgJA-0V9RcMDno6GnZV57vF_kh/exec";
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzHS-MSnDH20mYhIiVl95h1cz18WlrWB32U4PvT3EMK6a6OfdFkGCuVVLfcc4w6lOphMg/exec';
 
 // ── DEVICE LOCK — un registro por dispositivo por día
 var DEVICE_KEY = 'tl_device_id';
@@ -2436,8 +2436,21 @@ function guardarRegistro() {
   var registros = load(KEYS.registros) || [];
   registros.push(registro);
   save(KEYS.registros, registros);
-  syncToCloud(registro);
+  
+  // ENVIAR A GOOGLE SHEETS
+  const URL_SISTEMA = "https://script.google.com/macros/s/AKfycbzfmw1wJ-XoAU4kyAaXS5xonAKCr4dUBQj_h1Y09OjgJA-0V9RcMDno6GnZV57vF_kh/exec";
+  fetch(URL_SISTEMA, {
+    method: 'POST',
+    mode: 'no-cors',
+    cache: 'no-cache',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(registro)
+  }).then(() => console.log("Enviado")).catch(e => console.error(e));
+  
   stampDeviceLock(currentUser.id);
+  // Push to cloud
+  syncToCloud('registros', registros);
+  syncToCloud('fichas', load(KEYS.fichas));
 
   ['paso1','paso3','paso4'].forEach(function(p){ document.getElementById(p).classList.add('hidden'); });
   document.getElementById('successMsg').classList.remove('hidden');
@@ -2731,7 +2744,7 @@ function addAlumno() {
   if (pin && !/^[0-9]{4}$/.test(pin)) { alert('El PIN debe tener exactamente 4 dígitos numéricos.'); return; }
   alumnos.push({id:'a_'+Date.now(), nombre:nombre, apellidos:apellidos, curso:curso, name:nombre+' '+apellidos, pin:pin||null});
   save(KEYS.alumnos, alumnos);
-  syncToCloudTable('alumnos', alumnos);
+  syncToCloud('alumnos', alumnos);
   populateLoginSelect();
   renderAdmin();
 }
@@ -2762,10 +2775,10 @@ function saveEditAlumno() {
   var pinData = pin ? {pin:pin} : {};
   if (idx>=0) alumnos[idx] = Object.assign({}, alumnos[idx], {nombre:nombre, apellidos:apellidos, curso:curso, name:nombre+' '+apellidos}, pinData);
   save(KEYS.alumnos, alumnos);
-  syncToCloudTable('alumnos', alumnos);
+  syncToCloud('alumnos', alumnos);
   var registros = (load(KEYS.registros)||[]).map(function(r){ return r.alumnoId===id ? Object.assign({},r,{alumnoName:nombre+' '+apellidos}) : r; });
   save(KEYS.registros, registros);
-  syncToCloudTable('registros', registros);
+  syncToCloud('registros', registros);
   populateLoginSelect();
   renderAdmin();
 }
@@ -2776,8 +2789,8 @@ function deleteAlumno(id) {
   var newRegistros = (load(KEYS.registros)||[]).filter(function(r){ return r.alumnoId!==id; });
   save(KEYS.alumnos, newAlumnos);
   save(KEYS.registros, newRegistros);
-  syncToCloudTable('alumnos', newAlumnos);
-  syncToCloudTable('registros', newRegistros);
+  syncToCloud('alumnos', newAlumnos);
+  syncToCloud('registros', newRegistros);
   populateLoginSelect();
   currentAdminTab = 'gestion-alumnos';
   renderAdmin();
@@ -2850,7 +2863,7 @@ function addVehiculo() {
   var vehiculos = load(KEYS.vehiculos) || [];
   vehiculos.push({id:'v_'+Date.now(), name:name, piezas:piezas.join(', ')});
   save(KEYS.vehiculos, vehiculos);
-  syncToCloudTable('vehiculos', vehiculos);
+  syncToCloud('vehiculos', vehiculos);
   populateVehiculos();
   renderAdmin();
 }
@@ -2881,7 +2894,7 @@ function saveEditVehiculo() {
   var idx = vehiculos.findIndex(function(v){ return v.id===id; });
   if (idx>=0) vehiculos[idx] = Object.assign({}, vehiculos[idx], {name:name, piezas:piezas.join(', ')});
   save(KEYS.vehiculos, vehiculos);
-  syncToCloudTable('vehiculos', vehiculos);
+  syncToCloud('vehiculos', vehiculos);
   populateVehiculos();
   renderAdmin();
 }
@@ -2890,7 +2903,7 @@ function deleteVehiculo(id) {
   if (!confirm('¿Eliminar este vehículo?')) return;
   var newVehiculos = (load(KEYS.vehiculos)||[]).filter(function(v){ return v.id!==id; });
   save(KEYS.vehiculos, newVehiculos);
-  syncToCloudTable('vehiculos', newVehiculos);
+  syncToCloud('vehiculos', newVehiculos);
   populateVehiculos();
   renderAdmin();
 }
@@ -3599,7 +3612,7 @@ function cerrarProceso(alumnoId, vId, fase) {
   cierres[cierreKey] = { ceEvals: Object.assign({}, tmp), nota: nota, fecha: new Date().toLocaleDateString('es-ES') };
   delete cierres[tmpKey];
   save(KEYS.cierres, cierres);
-  syncToCloudTable('cierres', cierres);
+  syncToCloud('cierres', cierres);
   renderTabAlumno(document.getElementById('adminContentWrap'), alumnoId);
 }
 
@@ -3703,25 +3716,8 @@ function gasPost(table, data, callback) {
     });
 }
 
-async function syncToCloud(registro) {
-  try {
-    await fetch(URL_ALUMNO_SISTEMA, {
-      method: 'POST',
-      mode: 'no-cors',
-      cache: 'no-cache',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(registro)
-    });
-    return true;
-  } catch (error) {
-    console.error("Error crítico de red:", error);
-    return false;
-  }
-}
-
-// Función auxiliar para mantener compatibilidad con llamadas antiguas
-function syncToCloudTable(table, data) {
-  console.log('🔄 Sincronizando tabla a Google Sheets...', table);
+function syncToCloud(table, data) {
+  console.log('🔄 Sincronizando a Google Sheets...', table, data);
   gasPost(table, data, function(ok) {
     if (ok) {
       console.log('✅ Sincronización exitosa para tabla:', table);
