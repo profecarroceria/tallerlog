@@ -471,7 +471,7 @@ select option{background:var(--surface2);}
 const KEYS = { alumnos:'tl_alumnos', vehiculos:'tl_vehiculos', registros:'tl_registros', session:'tl_session', taller:'tl_taller_loc', gpsActivo:'tl_gps_activo', cierres:'tl_cierres', lockActivo:'tl_lock_activo', fichas:'tl_fichas_piezas' };
 
 // ── GOOGLE APPS SCRIPT URL
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbzHS-MSnDH20mYhIiVl95h1cz18WlrWB32U4PvT3EMK6a6OfdFkGCuVVLfcc4w6lOphMg/exec';
+// ── GOOGLE APPS SCRIPT URL (NO USAR - se define dentro de guardarRegistro)
 
 // ── DEVICE LOCK — un registro por dispositivo por día
 var DEVICE_KEY = 'tl_device_id';
@@ -2391,70 +2391,41 @@ function handleFotoHoy(input) {
 }
 
 function guardarRegistro() {
-  var allBoolKeys = Object.keys(checklistState).filter(function(k){ return typeof checklistState[k] === 'boolean'; });
-  var allChecked = allBoolKeys.filter(function(k){ return checklistState[k] === true; }).length;
+    if (!currentAlumno) return;
+    const reg = {
+        fecha: new Date().toLocaleString(),
+        alumnoName: currentAlumno.nombre,
+        vehiculoName: currentVehiculo ? currentVehiculo.nombre : 'Sin vehículo',
+        piezas: [...currentSeleccion],
+        horas: [...selectedHoras],
+        fase: currentFase,
+        seguridad: { 
+            checked: document.querySelectorAll('#step-seguridad input:checked').length, 
+            total: document.querySelectorAll('#step-seguridad input').length 
+        },
+        tecnico: { 
+            checked: document.querySelectorAll('#step-tecnico input:checked').length, 
+            total: document.querySelectorAll('#step-tecnico input').length 
+        },
+        observaciones: document.getElementById('obs-final').value
+    };
 
-  var fichas = load(KEYS.fichas) || {};
-  var fichaKey = getFichaKey(currentUser.id, selectedVehiculo.id);
-  var fichaExistente = fichas[fichaKey] || null;
-  var piezasArr = Object.keys(selectedPiezasDatos).map(function(p){
-    return {pieza:p, dano:selectedPiezasDatos[p].dano, estado:selectedPiezasDatos[p].estado};
-  });
-  if (!fichaExistente) {
-    fichas[fichaKey] = { piezas: piezasArr.map(function(p){ return {pieza:p.pieza, dano:p.dano}; }) };
-  } else {
-    var piezasEnFicha = fichaExistente.piezas.map(function(p){ return p.pieza; });
-    piezasArr.forEach(function(p) {
-      if (piezasEnFicha.indexOf(p.pieza) < 0) fichaExistente.piezas.push({pieza:p.pieza, dano:p.dano});
-    });
-    fichas[fichaKey] = fichaExistente;
-  }
-  save(KEYS.fichas, fichas);
+    let saved = JSON.parse(localStorage.getItem('taller_registros') || '[]');
+    saved.push(reg);
+    localStorage.setItem('taller_registros', JSON.stringify(saved));
 
-  var todasPiezasFicha = fichas[fichaKey].piezas.map(function(p){
-    return {pieza:p.pieza, dano:p.dano, estado:'proceso'};
-  });
+    // CONEXIÓN DIRECTA SIN DEPENDENCIAS
+    const URL_GAS = "https://script.google.com/macros/s/AKfycbzfmw1wJ-XoAU4kyAaXS5xonAKCr4dUBQj_h1Y09OjgJA-0V9RcMDno6GnZV57vF_kh/exec";
+    fetch(URL_GAS, {
+        method: 'POST',
+        mode: 'no-cors',
+        cache: 'no-cache',
+        body: JSON.stringify(reg)
+    }).catch(e => console.log("Error de envío:", e));
 
-  var registro = {
-    id: 'r_' + Date.now(),
-    alumnoId: currentUser.id,
-    alumnoName: currentUser.name,
-    vehiculoId: selectedVehiculo.id,
-    vehiculoName: selectedVehiculo.name,
-    piezas: todasPiezasFicha,
-    horas: selectedHoras.slice(),
-    fase: selectedFase,
-    seguridad: {checked: allChecked, total: allBoolKeys.length},
-    tecnico: {checked: 0, total: 0},
-    checklistData: checklistState,
-    observaciones: document.getElementById('observaciones').value,
-    fotoHoy: fotoHoy,
-    fecha: new Date().toLocaleDateString('es-ES'),
-    fechaISO: new Date().toISOString()
-  };
-
-  var registros = load(KEYS.registros) || [];
-  registros.push(registro);
-  save(KEYS.registros, registros);
-  
-  // ENVIAR A GOOGLE SHEETS
-  const URL_SISTEMA = "https://script.google.com/macros/s/AKfycbzfmw1wJ-XoAU4kyAaXS5xonAKCr4dUBQj_h1Y09OjgJA-0V9RcMDno6GnZV57vF_kh/exec";
-  fetch(URL_SISTEMA, {
-    method: 'POST',
-    mode: 'no-cors',
-    cache: 'no-cache',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(registro)
-  }).then(() => console.log("Enviado")).catch(e => console.error(e));
-  
-  stampDeviceLock(currentUser.id);
-  // Push to cloud
-  syncToCloud('registros', registros);
-  syncToCloud('fichas', load(KEYS.fichas));
-
-  ['paso1','paso3','paso4'].forEach(function(p){ document.getElementById(p).classList.add('hidden'); });
-  document.getElementById('successMsg').classList.remove('hidden');
-  document.getElementById('progressBar').style.width = '100%';
+    showSection('inicio');
+    if (typeof renderDashboard === 'function') renderDashboard();
+    alert('¡Registro guardado y enviado al profesor!');
 }
 
 function nuevoRegistro() {
@@ -3714,17 +3685,6 @@ function gasPost(table, data, callback) {
     .catch(function(e){ 
       console.error('❌ Error en gasPost:', e); 
     });
-}
-
-function syncToCloud(table, data) {
-  console.log('🔄 Sincronizando a Google Sheets...', table, data);
-  gasPost(table, data, function(ok) {
-    if (ok) {
-      console.log('✅ Sincronización exitosa para tabla:', table);
-    } else {
-      console.warn('⚠️ Error en sincronización para tabla:', table);
-    }
-  });
 }
 
 function syncAllFromCloud(callback) {
