@@ -1,0 +1,1904 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>TallerLog · Cuaderno del Alumno</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f0f6ff;
+  --surface:#ffffff;
+  --surface2:#e8f0fe;
+  --surface3:#dceefb;
+  --border:#c5d8f6;
+  --accent:#1565c0;
+  --accent-mid:#1976d2;
+  --accent2:#42a5f5;
+  --accent-light:#e3f2fd;
+  --text:#0d2137;
+  --text-dim:#5c7a9e;
+  --text-light:#8aaece;
+  --success:#1b8a4a;
+  --success-bg:#e8f5e9;
+  --success-border:#a5d6a7;
+  --danger:#c62828;
+  --danger-bg:#ffebee;
+  --warning:#e65100;
+  --warning-bg:#fff3e0;
+  --warning-border:#ffcc80;
+  --yellow:#f9a825;
+  --radius:12px;
+  --radius-sm:8px;
+  --shadow:0 2px 8px rgba(21,101,192,.1);
+  --shadow-md:0 4px 16px rgba(21,101,192,.15);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;overscroll-behavior:none;}
+input,select,textarea{font-family:'Nunito Sans',sans-serif;}
+
+/* ── SCROLLBAR */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+
+/* ── HEADER */
+.app-header{background:var(--accent);padding:13px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 3px 12px rgba(21,101,192,.35);}
+.header-logo{font-family:'Nunito',sans-serif;font-size:21px;font-weight:900;color:#fff;letter-spacing:-.3px;}
+.header-logo em{color:#90caf9;font-style:normal;}
+.header-user{background:rgba(255,255,255,.18);border-radius:20px;padding:5px 12px;font-size:12px;color:#e3f2fd;font-weight:700;display:flex;align-items:center;gap:6px;cursor:pointer;}
+
+/* ── BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:2px solid var(--border);display:flex;z-index:200;box-shadow:0 -4px 16px rgba(21,101,192,.12);}
+.bnav-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px 10px;cursor:pointer;gap:3px;color:var(--text-dim);transition:all .15s;border:none;background:none;}
+.bnav-tab.active{color:var(--accent);}
+.bnav-tab .bnav-icon{font-size:22px;line-height:1;}
+.bnav-tab .bnav-lbl{font-size:10px;font-weight:700;letter-spacing:.3px;font-family:'Nunito',sans-serif;}
+.bnav-indicator{position:absolute;top:0;left:50%;transform:translateX(-50%);width:32px;height:3px;background:var(--accent);border-radius:0 0 4px 4px;opacity:0;transition:opacity .15s;}
+.bnav-tab.active .bnav-indicator{opacity:1;}
+
+/* ── MAIN CONTENT */
+.app-shell{display:none;}
+.app-shell.visible{display:block;}
+.main-content{padding:16px 14px 90px;max-width:500px;margin:0 auto;}
+
+/* ── SCREENS */
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* ── LOGIN */
+.login-page{min-height:100vh;background:linear-gradient(160deg,#1565c0 0%,#0d47a1 40%,#1a237e 100%);display:flex;align-items:center;justify-content:center;padding:24px;}
+.login-card{background:#fff;border-radius:24px;padding:32px 28px;width:100%;max-width:360px;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+.login-logo{text-align:center;margin-bottom:28px;}
+.login-logo .lg-icon{font-size:56px;display:block;margin-bottom:8px;}
+.login-logo h1{font-family:'Nunito',sans-serif;font-size:28px;font-weight:900;color:var(--accent);}
+.login-logo h1 em{color:var(--accent2);font-style:normal;}
+.login-logo p{font-size:13px;color:var(--text-dim);margin-top:4px;}
+.login-field{margin-bottom:16px;}
+.login-field label{display:block;font-size:12px;font-weight:700;color:var(--text-dim);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;}
+.login-field input{width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:var(--radius);font-size:15px;font-family:'Nunito Sans',sans-serif;outline:none;color:var(--text);transition:border-color .2s;}
+.login-field input:focus{border-color:var(--accent);}
+.login-btn{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:16px;font-family:'Nunito',sans-serif;font-weight:800;cursor:pointer;transition:background .15s;margin-top:4px;}
+.login-btn:hover{background:var(--accent-mid);}
+.login-divider{text-align:center;color:var(--text-light);font-size:12px;margin:16px 0;position:relative;}
+.login-divider::before,.login-divider::after{content:'';position:absolute;top:50%;width:40%;height:1px;background:var(--border);}
+.login-divider::before{left:0;}
+.login-divider::after{right:0;}
+.login-existing{display:flex;flex-direction:column;gap:8px;max-height:160px;overflow-y:auto;}
+.login-existing-btn{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;font-size:14px;font-weight:700;color:var(--text);}
+.login-existing-btn:hover{border-color:var(--accent);background:var(--accent-light);}
+.login-existing-btn .le-avatar{width:34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-family:'Nunito',sans-serif;font-weight:900;flex-shrink:0;}
+
+/* ── CARDS */
+.card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:14px;overflow:hidden;}
+.card-head{padding:14px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);background:var(--accent-light);}
+.card-head-ico{font-size:22px;line-height:1;}
+.card-head-title{font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;color:var(--accent);}
+.card-head-sub{font-size:11px;color:var(--text-dim);margin-top:1px;font-weight:600;}
+.card-body{padding:14px 16px;}
+
+/* ── SECTION TITLE */
+.section-title{font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:var(--text-dim);letter-spacing:.6px;text-transform:uppercase;padding:6px 0 10px;display:flex;align-items:center;gap:6px;}
+
+/* ── FORM ELEMENTS */
+label.flabel{display:block;font-size:11px;font-weight:700;color:var(--text-dim);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px;margin-top:12px;}
+label.flabel:first-child{margin-top:0;}
+.finput{width:100%;padding:10px 13px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:'Nunito Sans',sans-serif;outline:none;color:var(--text);background:var(--surface);transition:border-color .2s;-webkit-appearance:none;}
+.finput:focus{border-color:var(--accent);}
+.finput-row{display:grid;gap:10px;}
+.finput-row.cols2{grid-template-columns:1fr 1fr;}
+.finput-row.cols3{grid-template-columns:1fr 1fr 1fr;}
+textarea.finput{resize:vertical;min-height:80px;}
+
+/* ── PROGRESS */
+.progress-wrap{background:var(--surface);padding:10px 16px;border-bottom:1px solid var(--border);position:sticky;top:52px;z-index:100;box-shadow:0 2px 6px rgba(21,101,192,.06);}
+.progress-meta{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:700;margin-bottom:5px;}
+.progress-step{color:var(--text-dim);}
+.progress-pct{color:var(--accent);}
+.progress-track{background:var(--surface2);border-radius:20px;height:7px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:20px;transition:width .4s ease;}
+
+/* ── STAT CARDS */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.stat-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:14px 10px;text-align:center;box-shadow:var(--shadow);}
+.stat-icon{font-size:22px;margin-bottom:4px;display:block;}
+.stat-num{font-family:'Nunito',sans-serif;font-size:26px;font-weight:900;color:var(--accent);line-height:1.1;}
+.stat-lbl{font-size:10px;color:var(--text-dim);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-top:2px;}
+
+/* ── PROCESOS GRID */
+.proceso-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.proceso-opt{background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius-sm);padding:12px 6px;text-align:center;cursor:pointer;transition:all .15s;user-select:none;}
+.proceso-opt:hover{border-color:var(--accent2);background:var(--accent-light);}
+.proceso-opt.selected{border-color:var(--accent);background:var(--accent-light);}
+.proceso-opt.selected .po-name{color:var(--accent);}
+.po-icon{font-size:26px;display:block;margin-bottom:4px;line-height:1;}
+.po-name{font-family:'Nunito',sans-serif;font-size:11px;font-weight:800;color:var(--text);}
+
+/* ── HORAS */
+.horas-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.hora-opt{background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius-sm);padding:11px 4px;text-align:center;cursor:pointer;transition:all .15s;user-select:none;}
+.hora-opt:hover{border-color:var(--accent2);}
+.hora-opt.selected{border-color:var(--accent);background:var(--accent-light);}
+.hora-num{font-family:'Nunito',sans-serif;font-size:22px;font-weight:900;color:var(--accent);}
+.hora-lbl{font-size:10px;color:var(--text-dim);font-weight:600;}
+
+/* ── PIEZAS */
+.piezas-grid{display:flex;flex-wrap:wrap;gap:7px;}
+.pieza-chip{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:2px solid var(--border);background:var(--surface2);color:var(--text-dim);transition:all .15s;user-select:none;font-family:'Nunito',sans-serif;}
+.pieza-chip:hover{border-color:var(--accent2);}
+.pieza-chip.selected{border-color:var(--accent);background:var(--accent-light);color:var(--accent);}
+.pieza-chip .pc-check{display:none;}
+.pieza-chip.selected .pc-check{display:inline;}
+
+/* DAÑO SELECTOR */
+.dano-sel{display:none;margin-top:8px;background:var(--surface2);border-radius:var(--radius-sm);padding:10px;border:1px solid var(--border);}
+.dano-sel.visible{display:block;}
+.dano-opts{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+.dano-opt{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:2px solid var(--border);background:var(--surface);transition:all .12s;font-family:'Nunito',sans-serif;}
+.dano-opt[data-v="leve"].sel{background:#fff8e1;border-color:var(--yellow);color:#e65100;}
+.dano-opt[data-v="medio"].sel{background:#fff3e0;border-color:#ff9800;color:#e65100;}
+.dano-opt[data-v="fuerte"].sel{background:#ffebee;border-color:#ef5350;color:var(--danger);}
+
+/* ── CHECKLIST */
+.cl-section{margin-bottom:12px;}
+.cl-section-title{font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;background:var(--accent-light);border-left:4px solid var(--accent);padding:7px 12px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;margin-bottom:6px;}
+.cl-item{display:flex;align-items:flex-start;gap:10px;padding:8px 4px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;border-radius:6px;}
+.cl-item:last-child{border-bottom:none;}
+.cl-item:hover{background:var(--surface2);}
+.cl-box{width:22px;height:22px;border:2px solid var(--border);border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--surface);transition:all .15s;margin-top:1px;font-size:13px;}
+.cl-item.checked .cl-box{background:var(--success);border-color:var(--success);color:#fff;}
+.cl-label{font-size:13px;line-height:1.45;flex:1;}
+.cl-item.checked .cl-label{color:var(--text-dim);}
+.cl-icon{font-size:16px;flex-shrink:0;margin-top:2px;}
+
+/* EPI GRID */
+.epi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.epi-opt{background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius-sm);padding:10px 6px;text-align:center;cursor:pointer;transition:all .15s;user-select:none;}
+.epi-opt:hover{border-color:var(--accent2);}
+.epi-opt.selected{border-color:var(--success);background:var(--success-bg);}
+.epi-opt .epi-ico{font-size:24px;display:block;margin-bottom:4px;}
+.epi-opt .epi-lbl{font-size:11px;font-weight:700;color:var(--text);font-family:'Nunito',sans-serif;}
+.epi-opt.selected .epi-lbl{color:var(--success);}
+
+/* TIPO OPTS (masillas, métodos, etc) */
+.tipo-grid{display:grid;gap:7px;}
+.tipo-grid.cols2{grid-template-columns:1fr 1fr;}
+.tipo-grid.cols3{grid-template-columns:1fr 1fr 1fr;}
+.tipo-grid.cols4{grid-template-columns:1fr 1fr 1fr 1fr;}
+.tipo-opt{background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius-sm);padding:10px 8px;text-align:center;cursor:pointer;transition:all .15s;user-select:none;}
+.tipo-opt:hover{border-color:var(--accent2);}
+.tipo-opt.selected{border-color:var(--accent);background:var(--accent-light);}
+.tipo-opt .to-ico{font-size:22px;display:block;margin-bottom:3px;}
+.tipo-opt .to-lbl{font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;color:var(--text);}
+.tipo-opt .to-desc{font-size:10px;color:var(--text-dim);margin-top:2px;}
+.tipo-opt.selected .to-lbl{color:var(--accent);}
+
+/* INPUT GROUPS dentro de checklist */
+.cl-input-wrap{background:var(--surface2);border-radius:var(--radius-sm);padding:12px;margin-bottom:10px;border:1px solid var(--border);}
+.cl-input-label{font-size:11px;font-weight:700;color:var(--text-dim);letter-spacing:.4px;text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;gap:5px;}
+
+/* ── BANNERS */
+.epi-banner{background:var(--warning-bg);border:1px solid var(--warning-border);border-radius:var(--radius-sm);padding:10px 14px;display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.epi-banner .eb-icon{font-size:22px;}
+.epi-banner .eb-text{font-size:12px;color:var(--warning);font-weight:700;line-height:1.4;}
+.success-banner{background:var(--success-bg);border:1px solid var(--success-border);border-radius:var(--radius);padding:20px;text-align:center;}
+.success-banner .sb-icon{font-size:52px;display:block;margin-bottom:10px;}
+.success-banner .sb-title{font-family:'Nunito',sans-serif;font-size:22px;font-weight:900;color:var(--success);}
+.success-banner .sb-sub{font-size:13px;color:var(--text-dim);margin-top:4px;}
+.sync-status{font-size:12px;margin-top:8px;padding:6px 12px;background:var(--accent-light);border-radius:6px;color:var(--accent);font-weight:700;display:none;}
+
+/* ── BTNS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 20px;border-radius:var(--radius);font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;border:none;transition:all .15s;letter-spacing:.2px;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{background:var(--accent-mid);}
+.btn-success{background:var(--success);color:#fff;}
+.btn-success:hover{background:#1a7a42;}
+.btn-secondary{background:var(--surface2);color:var(--text);border:2px solid var(--border);}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent);}
+.btn-danger{background:var(--danger);color:#fff;}
+.btn-full{width:100%;}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.btn-export{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;width:100%;padding:14px;font-size:15px;border-radius:var(--radius);margin-bottom:12px;}
+.nav-btns{display:flex;gap:10px;margin-top:16px;}
+.nav-btns .btn{flex:1;}
+
+/* ── FOTO SLOTS */
+.foto-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;}
+.foto-slot{position:relative;background:var(--surface2);border:2px dashed var(--border);border-radius:var(--radius-sm);aspect-ratio:4/3;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:border-color .2s;overflow:hidden;}
+.foto-slot:hover{border-color:var(--accent);}
+.foto-slot.has-photo{border-style:solid;border-color:var(--accent);}
+.foto-slot img{width:100%;height:100%;object-fit:cover;}
+.foto-slot-label{font-size:12px;font-weight:700;color:var(--text-dim);margin-top:6px;font-family:'Nunito',sans-serif;}
+.foto-slot-icon{font-size:26px;}
+.foto-overlay{position:absolute;bottom:0;left:0;right:0;background:rgba(13,33,55,.7);padding:5px 8px;display:flex;justify-content:space-between;align-items:center;}
+.foto-overlay span{font-size:10px;color:#fff;font-weight:700;}
+.foto-del{background:var(--danger);color:#fff;border:none;border-radius:4px;padding:2px 8px;font-size:10px;cursor:pointer;font-weight:700;font-family:'Nunito',sans-serif;}
+
+/* ── HISTORIAL */
+.reg-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);margin-bottom:10px;overflow:hidden;box-shadow:var(--shadow);cursor:pointer;transition:box-shadow .15s;}
+.reg-card:hover{box-shadow:var(--shadow-md);}
+.reg-head{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);flex-wrap:wrap;}
+.reg-fecha{font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:var(--accent);}
+.reg-fase-badge{font-size:11px;background:var(--accent-light);color:var(--accent);border:1px solid var(--border);border-radius:20px;padding:2px 9px;font-weight:700;font-family:'Nunito',sans-serif;}
+.reg-status{margin-left:auto;font-size:11px;font-weight:700;font-family:'Nunito',sans-serif;}
+.reg-status.pendiente{color:var(--warning);}
+.reg-status.validado{color:var(--success);}
+.reg-status.revisar{color:var(--danger);}
+.reg-body{padding:10px 14px;font-size:12px;color:var(--text-dim);font-weight:600;line-height:1.6;}
+.reg-detail{display:none;padding:12px 14px;border-top:1px solid var(--border);}
+.reg-detail.open{display:block;}
+.reg-detail-section{margin-bottom:10px;}
+.reg-detail-title{font-size:11px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;font-family:'Nunito',sans-serif;}
+
+/* ── ALTA VEHÍCULO — HOJA DE RECEPCIÓN */
+.recepcion-header{background:linear-gradient(135deg,var(--accent),#0d47a1);color:#fff;padding:18px;border-radius:var(--radius);margin-bottom:16px;position:relative;overflow:hidden;}
+.recepcion-header::before{content:'🔧';position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:64px;opacity:.12;}
+.recepcion-header h2{font-family:'Nunito',sans-serif;font-size:18px;font-weight:900;margin-bottom:3px;}
+.recepcion-header p{font-size:12px;opacity:.8;}
+
+.rec-section{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);margin-bottom:14px;overflow:hidden;box-shadow:var(--shadow);}
+.rec-section-head{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--accent-light);border-bottom:1px solid var(--border);}
+.rec-section-head .rs-ico{font-size:20px;}
+.rec-section-head .rs-title{font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--accent);}
+.rec-section-body{padding:14px 16px;}
+
+/* MAPA DE DAÑOS */
+.damage-map{position:relative;margin:10px auto;max-width:300px;}
+.damage-map svg{width:100%;}
+.damage-zone{cursor:pointer;transition:opacity .15s;}
+.damage-zone:hover{opacity:.75;}
+.damage-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;margin:3px;font-family:'Nunito',sans-serif;cursor:pointer;}
+.damage-badge.leve{background:#fff8e1;color:#e65100;border:1px solid #ffcc80;}
+.damage-badge.medio{background:#fff3e0;color:#bf360c;border:1px solid #ff9800;}
+.damage-badge.fuerte{background:#ffebee;color:var(--danger);border:1px solid #ef9a9a;}
+
+/* NIVEL COMBUSTIBLE */
+.fuel-bar{display:flex;align-items:center;gap:8px;margin-top:6px;}
+.fuel-track{flex:1;height:16px;background:var(--surface2);border-radius:20px;overflow:hidden;border:1px solid var(--border);position:relative;}
+.fuel-fill{height:100%;border-radius:20px;transition:width .3s;position:relative;}
+.fuel-opts{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;}
+.fuel-opt{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:2px solid var(--border);background:var(--surface2);transition:all .12s;font-family:'Nunito',sans-serif;}
+.fuel-opt.selected{border-color:var(--accent);background:var(--accent-light);color:var(--accent);}
+
+/* CONDICIÓN CHECKLIST */
+.cond-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.cond-item{display:flex;align-items:center;gap:7px;padding:8px 10px;border-radius:var(--radius-sm);border:2px solid var(--border);background:var(--surface2);cursor:pointer;font-size:12px;font-weight:700;transition:all .15s;}
+.cond-item.ok{border-color:var(--success);background:var(--success-bg);color:var(--success);}
+.cond-item.ko{border-color:var(--danger);background:var(--danger-bg);color:var(--danger);}
+.cond-item .ci-ico{font-size:16px;}
+.cond-item .ci-lbl{flex:1;font-family:'Nunito',sans-serif;}
+.cond-item .ci-status{font-size:10px;opacity:.8;}
+
+/* VEHÍCULO CARD */
+.vehiculo-card{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all .15s;margin-bottom:10px;}
+.vehiculo-card:hover{border-color:var(--accent2);}
+.vehiculo-card.active{border-color:var(--accent);background:var(--accent-light);}
+.vc-ico{font-size:36px;}
+.vc-info{flex:1;}
+.vc-name{font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--text);}
+.vc-sub{font-size:12px;color:var(--text-dim);margin-top:2px;font-weight:600;}
+.vc-check{width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;display:none;}
+.vehiculo-card.active .vc-check{display:flex;}
+
+/* EXPORT */
+.export-section{background:linear-gradient(135deg,#1565c0,#0d47a1);border-radius:var(--radius);padding:22px;text-align:center;margin-bottom:16px;color:#fff;}
+.export-section h3{font-family:'Nunito',sans-serif;font-size:18px;font-weight:900;margin-bottom:6px;}
+.export-section p{font-size:12px;opacity:.85;margin-bottom:16px;line-height:1.5;}
+.export-btn-big{background:#fff;color:var(--accent);border:none;border-radius:var(--radius);padding:13px 24px;font-size:15px;font-family:'Nunito',sans-serif;font-weight:900;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:all .15s;width:100%;justify-content:center;}
+.export-btn-big:hover{background:#e3f2fd;}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:40px 20px;color:var(--text-dim);}
+.empty-state .es-icon{font-size:52px;display:block;margin-bottom:12px;}
+.empty-state p{font-size:14px;font-weight:600;}
+
+/* STEP INDICATOR */
+.step-indicator{display:flex;align-items:center;gap:4px;justify-content:center;margin-bottom:16px;}
+.step-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .2s;}
+.step-dot.active{background:var(--accent);width:24px;border-radius:4px;}
+.step-dot.done{background:var(--success);}
+
+/* LIGHTBOX */
+.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9999;align-items:center;justify-content:center;}
+.lightbox.open{display:flex;}
+.lightbox img{max-width:92vw;max-height:88vh;border-radius:var(--radius);}
+.lightbox-close{position:absolute;top:16px;right:20px;font-size:30px;color:#fff;cursor:pointer;line-height:1;background:rgba(255,255,255,.15);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+
+@media(max-width:380px){
+  .proceso-grid{grid-template-columns:repeat(3,1fr);}
+  .epi-grid{grid-template-columns:repeat(3,1fr);}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     LOGIN
+════════════════════════════════════════════ -->
+<div id="loginPage" class="login-page">
+  <div class="login-card">
+    <div class="login-logo">
+      <span class="lg-icon">🔧</span>
+      <h1>Taller<em>Log</em></h1>
+      <p>Cuaderno digital de prácticas · 2º Carrocería FP</p>
+    </div>
+    <div class="login-field">
+      <label>Tu nombre</label>
+      <input type="text" id="loginNombre" placeholder="Escribe tu nombre completo" autocomplete="off">
+    </div>
+    <button class="login-btn" onclick="doLogin()">🚀 Entrar al taller</button>
+
+    <div id="loginExistingWrap" style="display:none">
+      <div class="login-divider">o elige tu nombre</div>
+      <div class="login-existing" id="loginExistingList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     APP SHELL
+════════════════════════════════════════════ -->
+<div id="appShell" class="app-shell">
+
+  <header class="app-header">
+    <div class="header-logo">🔧 Taller<em>Log</em></div>
+    <div class="header-user" onclick="showLogoutConfirm()" id="headerUser">👷 —</div>
+  </header>
+
+  <!-- PANTALLA: REGISTRO DIARIO -->
+  <div class="screen active" id="screenRegistro">
+    <div id="progressBar" class="progress-wrap" style="display:none">
+      <div class="progress-meta">
+        <span class="progress-step" id="progressLabel">Paso 1 de 4</span>
+        <span class="progress-pct" id="progressPct">0%</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    </div>
+    <div class="main-content">
+      <!-- PASO 0: INICIO / DASHBOARD -->
+      <div id="paso0">
+        <div class="stats-row">
+          <div class="stat-card"><span class="stat-icon">📅</span><div class="stat-num" id="statJornadas">0</div><div class="stat-lbl">Jornadas</div></div>
+          <div class="stat-card"><span class="stat-icon">⏱️</span><div class="stat-num" id="statHoras">0</div><div class="stat-lbl">Horas</div></div>
+          <div class="stat-card"><span class="stat-icon">✅</span><div class="stat-num" id="statCheck">—</div><div class="stat-lbl">% Checklist</div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <span class="card-head-ico">📋</span>
+            <div><div class="card-head-title">Registrar jornada de hoy</div><div class="card-head-sub">Documenta tu trabajo en el taller</div></div>
+          </div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
+            <div class="epi-banner">
+              <span class="eb-icon">⚠️</span>
+              <div class="eb-text">Antes de empezar: mascarilla 😷 + guantes 🧤 + gafas 🥽</div>
+            </div>
+            <button class="btn btn-primary btn-full" onclick="irPaso(1)">📝 Nueva jornada →</button>
+          </div>
+        </div>
+
+        <!-- ÚLTIMAS JORNADAS (mini) -->
+        <div class="section-title">📚 Últimas jornadas</div>
+        <div id="ultimasJornadas"></div>
+      </div>
+
+      <!-- PASO 1: VEHÍCULO + PIEZAS -->
+      <div id="paso1" style="display:none">
+        <div class="step-indicator" id="stepDots"></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="card-head-ico">🚗</span>
+            <div><div class="card-head-title">¿Con qué vehículo trabajas hoy?</div><div class="card-head-sub">Selecciona tu vehículo</div></div>
+          </div>
+          <div class="card-body">
+            <div id="vehiculosListReg"></div>
+            <div id="piezasWrap" style="display:none">
+              <div class="section-title" style="margin-top:12px">🔩 Piezas a trabajar hoy</div>
+              <div class="piezas-grid" id="piezasGrid"></div>
+              <div id="danoWrap" class="dano-sel"></div>
+            </div>
+          </div>
+        </div>
+        <div class="nav-btns">
+          <button class="btn btn-secondary" onclick="irPaso(0)">← Volver</button>
+          <button class="btn btn-primary" id="btnSig1" onclick="irPaso(2)" disabled>Siguiente →</button>
+        </div>
+      </div>
+
+      <!-- PASO 2: PROCESO + HORAS -->
+      <div id="paso2" style="display:none">
+        <div class="step-indicator" id="stepDots2"></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="card-head-ico">🛠️</span>
+            <div><div class="card-head-title">¿En qué proceso trabajas hoy?</div></div>
+          </div>
+          <div class="card-body">
+            <div class="proceso-grid" id="procesoGrid">
+              <div class="proceso-opt" onclick="selectProceso(this,'desabollado')"><span class="po-icon">🔨</span><span class="po-name">Desabollado</span></div>
+              <div class="proceso-opt" onclick="selectProceso(this,'plasticos')"><span class="po-icon">🧱</span><span class="po-name">Plásticos</span></div>
+              <div class="proceso-opt" onclick="selectProceso(this,'enmasillado')"><span class="po-icon">🪚</span><span class="po-name">Enmasillado</span></div>
+              <div class="proceso-opt" onclick="selectProceso(this,'aparejado')"><span class="po-icon">🪣</span><span class="po-name">Aparejado</span></div>
+              <div class="proceso-opt" onclick="selectProceso(this,'enmascarado')"><span class="po-icon">🎭</span><span class="po-name">Enmascarado</span></div>
+              <div class="proceso-opt" onclick="selectProceso(this,'limpieza')"><span class="po-icon">🧹</span><span class="po-name">Limpieza</span></div>
+              <div class="proceso-opt" onclick="selectProceso(this,'pintado')"><span class="po-icon">🎨</span><span class="po-name">Pintado</span></div>
+              <div class="proceso-opt" onclick="selectProceso(this,'barnizado')"><span class="po-icon">✨</span><span class="po-name">Barnizado</span></div>
+              <div class="proceso-opt" onclick="selectProceso(this,'correccion')"><span class="po-icon">🔍</span><span class="po-name">Corrección</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <span class="card-head-ico">⏰</span>
+            <div><div class="card-head-title">Horas trabajadas hoy</div></div>
+          </div>
+          <div class="card-body">
+            <div class="horas-grid">
+              <div class="hora-opt" onclick="toggleHora(this,1)"><div class="hora-num">1</div><div class="hora-lbl">hora</div></div>
+              <div class="hora-opt" onclick="toggleHora(this,2)"><div class="hora-num">2</div><div class="hora-lbl">horas</div></div>
+              <div class="hora-opt" onclick="toggleHora(this,3)"><div class="hora-num">3</div><div class="hora-lbl">horas</div></div>
+              <div class="hora-opt" onclick="toggleHora(this,4)"><div class="hora-num">4</div><div class="hora-lbl">horas</div></div>
+              <div class="hora-opt" onclick="toggleHora(this,5)"><div class="hora-num">5</div><div class="hora-lbl">horas</div></div>
+              <div class="hora-opt" onclick="toggleHora(this,6)"><div class="hora-num">6</div><div class="hora-lbl">horas</div></div>
+              <div class="hora-opt" onclick="toggleHora(this,7)"><div class="hora-num">7</div><div class="hora-lbl">horas</div></div>
+              <div class="hora-opt" onclick="toggleHora(this,8)"><div class="hora-num">8</div><div class="hora-lbl">horas</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="nav-btns">
+          <button class="btn btn-secondary" onclick="irPaso(1)">← Atrás</button>
+          <button class="btn btn-primary" id="btnSig2" onclick="irPaso(3)" disabled>Siguiente →</button>
+        </div>
+      </div>
+
+      <!-- PASO 3: CHECKLIST PROCESO -->
+      <div id="paso3" style="display:none">
+        <div class="step-indicator" id="stepDots3"></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="card-head-ico" id="checklistIcon">📋</span>
+            <div><div class="card-head-title" id="checklistTitle">Checklist del proceso</div><div class="card-head-sub" id="checklistSub">Documenta lo que has hecho hoy</div></div>
+          </div>
+          <div class="card-body" id="checklistBody"></div>
+        </div>
+
+        <!-- EPIs -->
+        <div class="card">
+          <div class="card-head">
+            <span class="card-head-ico">🦺</span>
+            <div><div class="card-head-title">EPIs utilizados hoy</div><div class="card-head-sub">Marca los equipos de protección que llevas</div></div>
+          </div>
+          <div class="card-body">
+            <div class="epi-grid" id="episGrid"></div>
+          </div>
+        </div>
+
+        <!-- FOTO -->
+        <div class="card">
+          <div class="card-head">
+            <span class="card-head-ico">📸</span>
+            <div><div class="card-head-title">Foto del estado hoy</div><div class="card-head-sub">Documenta visualmente tu progreso</div></div>
+          </div>
+          <div class="card-body">
+            <div style="background:var(--surface2);border:2px dashed var(--border);border-radius:var(--radius-sm);height:90px;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;font-size:13px;font-weight:700;color:var(--text-dim);" onclick="triggerFoto()">
+              📷 Toca para hacer una foto
+            </div>
+            <input type="file" accept="image/*" capture="environment" id="fotoInput" style="display:none" onchange="handleFoto(this)">
+            <div id="fotoPreview" style="display:none;margin-top:10px"></div>
+          </div>
+        </div>
+
+        <!-- OBSERVACIONES -->
+        <div class="card">
+          <div class="card-head">
+            <span class="card-head-ico">📝</span>
+            <div><div class="card-head-title">Observaciones</div><div class="card-head-sub">Dificultades, materiales usados, notas...</div></div>
+          </div>
+          <div class="card-body">
+            <textarea class="finput" id="obsInput" rows="3" placeholder="Escribe aquí cualquier observación sobre el trabajo de hoy..."></textarea>
+          </div>
+        </div>
+
+        <!-- ORDEN Y LIMPIEZA -->
+        <div class="card">
+          <div class="card-head">
+            <span class="card-head-ico">🧹</span>
+            <div><div class="card-head-title">Orden y limpieza al finalizar</div></div>
+          </div>
+          <div class="card-body" id="ordenBody"></div>
+        </div>
+
+        <div class="nav-btns">
+          <button class="btn btn-secondary" onclick="irPaso(2)">← Atrás</button>
+          <button class="btn btn-success btn-full" onclick="guardarJornada()">✅ Guardar jornada</button>
+        </div>
+      </div>
+
+      <!-- PASO 4: ÉXITO -->
+      <div id="paso4" style="display:none">
+        <div class="success-banner">
+          <span class="sb-icon">🎉</span>
+          <div class="sb-title">¡Jornada guardada!</div>
+          <div class="sb-sub">Tu trabajo de hoy ha quedado registrado en tu cuaderno.</div>
+          <div class="sync-status" id="syncStatus">☁️ Sincronizando...</div>
+        </div>
+        <div style="margin-top:16px;display:flex;flex-direction:column;gap:10px">
+          <button class="btn btn-primary btn-full" onclick="irPaso(0)">📋 Volver al inicio</button>
+          <button class="btn btn-secondary btn-full" onclick="irPaso(1)">➕ Registrar otra tarea</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANTALLA: ALTA VEHÍCULO -->
+  <div class="screen" id="screenVehiculo">
+    <div class="main-content">
+      <div class="recepcion-header">
+        <h2>🚗 Alta de Vehículo</h2>
+        <p>Hoja de recepción profesional del taller</p>
+      </div>
+
+      <!-- VEHÍCULOS EXISTENTES -->
+      <div id="vehiculosExistentes"></div>
+      <button class="btn btn-primary btn-full" onclick="toggleFormVehiculo()" id="btnNuevoVehiculo" style="margin-bottom:16px">➕ Dar de alta nuevo vehículo</button>
+
+      <!-- FORMULARIO ALTA -->
+      <div id="formVehiculo" style="display:none">
+
+        <!-- 1. DATOS DEL VEHÍCULO -->
+        <div class="rec-section">
+          <div class="rec-section-head"><span class="rs-ico">🚗</span><span class="rs-title">Datos del vehículo</span></div>
+          <div class="rec-section-body">
+            <div class="finput-row cols2">
+              <div><label class="flabel">Marca</label><input class="finput" id="rv_marca" placeholder="ej: Seat, Ford..."></div>
+              <div><label class="flabel">Modelo</label><input class="finput" id="rv_modelo" placeholder="ej: Ibiza, Focus..."></div>
+            </div>
+            <div class="finput-row cols3" style="margin-top:10px">
+              <div><label class="flabel">Año</label><input class="finput" id="rv_anio" placeholder="2020" type="number"></div>
+              <div><label class="flabel">Matrícula</label><input class="finput" id="rv_matricula" placeholder="1234 ABC" style="text-transform:uppercase"></div>
+              <div><label class="flabel">Color</label><input class="finput" id="rv_color" placeholder="Blanco..."></div>
+            </div>
+            <div class="finput-row cols2" style="margin-top:10px">
+              <div><label class="flabel">Kilómetros</label><input class="finput" id="rv_km" placeholder="45000" type="number"></div>
+              <div><label class="flabel">Nº de bastidor (VIN)</label><input class="finput" id="rv_vin" placeholder="WVWZZZ1KZ..."></div>
+            </div>
+            <div style="margin-top:10px">
+              <label class="flabel">Tipo de carrocería</label>
+              <div class="tipo-grid cols4" style="margin-top:6px">
+                <div class="tipo-opt" onclick="selectTipoCarroceria(this,'turismo')"><span class="to-ico">🚗</span><span class="to-lbl">Turismo</span></div>
+                <div class="tipo-opt" onclick="selectTipoCarroceria(this,'suv')"><span class="to-ico">🚙</span><span class="to-lbl">SUV</span></div>
+                <div class="tipo-opt" onclick="selectTipoCarroceria(this,'furgoneta')"><span class="to-ico">🚐</span><span class="to-lbl">Furgoneta</span></div>
+                <div class="tipo-opt" onclick="selectTipoCarroceria(this,'pickup')"><span class="to-ico">🛻</span><span class="to-lbl">Pick-up</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. DATOS DEL CLIENTE / SINIESTRO -->
+        <div class="rec-section">
+          <div class="rec-section-head"><span class="rs-ico">👤</span><span class="rs-title">Datos del cliente / siniestro</span></div>
+          <div class="rec-section-body">
+            <div class="finput-row cols2">
+              <div><label class="flabel">Nombre cliente</label><input class="finput" id="rv_cliente" placeholder="Nombre y apellidos"></div>
+              <div><label class="flabel">Teléfono</label><input class="finput" id="rv_telefono" placeholder="600 000 000" type="tel"></div>
+            </div>
+            <div style="margin-top:10px">
+              <label class="flabel">Compañía de seguros</label>
+              <input class="finput" id="rv_seguro" placeholder="Nombre de la compañía aseguradora">
+            </div>
+            <div style="margin-top:10px">
+              <label class="flabel">Nº de expediente / siniestro</label>
+              <input class="finput" id="rv_expediente" placeholder="EXP-2024-XXXXX">
+            </div>
+            <div style="margin-top:10px">
+              <label class="flabel">Tipo de entrada</label>
+              <div class="tipo-grid cols2" style="margin-top:6px">
+                <div class="tipo-opt" onclick="selectTipoEntrada(this,'siniestro')"><span class="to-ico">💥</span><span class="to-lbl">Siniestro</span><span class="to-desc">Reparación por accidente</span></div>
+                <div class="tipo-opt" onclick="selectTipoEntrada(this,'particular')"><span class="to-ico">🔧</span><span class="to-lbl">Particular</span><span class="to-desc">Cliente directo</span></div>
+                <div class="tipo-opt" onclick="selectTipoEntrada(this,'garantia')"><span class="to-ico">📋</span><span class="to-lbl">Garantía</span><span class="to-desc">Trabajo en garantía</span></div>
+                <div class="tipo-opt" onclick="selectTipoEntrada(this,'practicas')"><span class="to-ico">🎓</span><span class="to-lbl">Prácticas FP</span><span class="to-desc">Vehículo de prácticas</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. ESTADO DEL VEHÍCULO EN RECEPCIÓN -->
+        <div class="rec-section">
+          <div class="rec-section-head"><span class="rs-ico">🔍</span><span class="rs-title">Estado en recepción</span></div>
+          <div class="rec-section-body">
+            <label class="flabel">⛽ Nivel de combustible</label>
+            <div class="fuel-opts" id="fuelOpts">
+              <div class="fuel-opt" onclick="setFuel(this,'E')">E — Reserva</div>
+              <div class="fuel-opt" onclick="setFuel(this,'1/4')">1/4</div>
+              <div class="fuel-opt" onclick="setFuel(this,'1/2')">1/2</div>
+              <div class="fuel-opt" onclick="setFuel(this,'3/4')">3/4</div>
+              <div class="fuel-opt" onclick="setFuel(this,'F')">F — Lleno</div>
+            </div>
+            <label class="flabel" style="margin-top:14px">📋 Condición general</label>
+            <div class="cond-grid" id="condGrid">
+              <div class="cond-item" data-k="documentacion" onclick="toggleCond(this)"><span class="ci-ico">📄</span><span class="ci-lbl">Documentación</span><span class="ci-status">—</span></div>
+              <div class="cond-item" data-k="rueda_repuesto" onclick="toggleCond(this)"><span class="ci-ico">🛞</span><span class="ci-lbl">Rueda repuesto</span><span class="ci-status">—</span></div>
+              <div class="cond-item" data-k="gato_herramienta" onclick="toggleCond(this)"><span class="ci-ico">🔩</span><span class="ci-lbl">Gato y herram.</span><span class="ci-status">—</span></div>
+              <div class="cond-item" data-k="extintor" onclick="toggleCond(this)"><span class="ci-ico">🧯</span><span class="ci-lbl">Extintor</span><span class="ci-status">—</span></div>
+              <div class="cond-item" data-k="triangulos" onclick="toggleCond(this)"><span class="ci-ico">⚠️</span><span class="ci-lbl">Triángulos</span><span class="ci-status">—</span></div>
+              <div class="cond-item" data-k="chalecos" onclick="toggleCond(this)"><span class="ci-ico">🦺</span><span class="ci-lbl">Chalecos</span><span class="ci-status">—</span></div>
+              <div class="cond-item" data-k="objetos_valor" onclick="toggleCond(this)"><span class="ci-ico">💎</span><span class="ci-lbl">Objetos de valor</span><span class="ci-status">—</span></div>
+              <div class="cond-item" data-k="radio_gps" onclick="toggleCond(this)"><span class="ci-ico">📻</span><span class="ci-lbl">Radio / GPS</span><span class="ci-status">—</span></div>
+            </div>
+            <div style="margin-top:12px">
+              <label class="flabel">🪟 Estado cristales y lunas</label>
+              <div class="tipo-grid cols3" style="margin-top:6px">
+                <div class="tipo-opt" onclick="selectEstadoCristal(this,'ok')"><span class="to-ico">✅</span><span class="to-lbl">Sin daños</span></div>
+                <div class="tipo-opt" onclick="selectEstadoCristal(this,'rayaduras')"><span class="to-ico">〰️</span><span class="to-lbl">Rayaduras</span></div>
+                <div class="tipo-opt" onclick="selectEstadoCristal(this,'roturas')"><span class="to-ico">💥</span><span class="to-lbl">Roturas</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. MAPA DE DAÑOS -->
+        <div class="rec-section">
+          <div class="rec-section-head"><span class="rs-ico">🗺️</span><span class="rs-title">Mapa de daños en carrocería</span></div>
+          <div class="rec-section-body">
+            <p style="font-size:12px;color:var(--text-dim);margin-bottom:10px">Toca las zonas dañadas del vehículo para registrar el daño</p>
+            <!-- SVG Car Map -->
+            <div class="damage-map">
+              <svg viewBox="0 0 300 160" xmlns="http://www.w3.org/2000/svg">
+                <!-- Carrocería base -->
+                <rect x="20" y="60" width="260" height="70" rx="12" fill="#e8f0fe" stroke="#c5d8f6" stroke-width="1.5"/>
+                <!-- Techo -->
+                <path d="M80 60 Q100 20 200 20 Q220 20 240 60 Z" fill="#dceefb" stroke="#c5d8f6" stroke-width="1.5"/>
+                <!-- Capó -->
+                <rect x="200" y="65" width="70" height="45" rx="6" fill="#e8f0fe" stroke="#c5d8f6" stroke-width="1"/>
+                <!-- Portón -->
+                <rect x="30" y="65" width="60" height="45" rx="6" fill="#e8f0fe" stroke="#c5d8f6" stroke-width="1"/>
+                <!-- Ruedas -->
+                <circle cx="75" cy="130" r="16" fill="#0d2137" stroke="#5c7a9e" stroke-width="1.5"/>
+                <circle cx="75" cy="130" r="8" fill="#5c7a9e"/>
+                <circle cx="225" cy="130" r="16" fill="#0d2137" stroke="#5c7a9e" stroke-width="1.5"/>
+                <circle cx="225" cy="130" r="8" fill="#5c7a9e"/>
+                <!-- Parachoques -->
+                <rect x="10" y="80" width="18" height="30" rx="5" fill="#c5d8f6" stroke="#a0bde8" stroke-width="1"/>
+                <rect x="272" y="80" width="18" height="30" rx="5" fill="#c5d8f6" stroke="#a0bde8" stroke-width="1"/>
+                <!-- Luces delanteras -->
+                <rect x="272" y="66" width="16" height="12" rx="3" fill="#fff9c4" stroke="#f9a825" stroke-width="1"/>
+                <!-- Luces traseras -->
+                <rect x="12" y="66" width="16" height="12" rx="3" fill="#ffcdd2" stroke="#e57373" stroke-width="1"/>
+                <!-- Zonas clickables con IDs -->
+                <rect class="damage-zone" id="dz_capo" x="200" y="65" width="70" height="45" rx="6" fill="transparent" stroke="transparent" stroke-width="8" onclick="clickDamagezone('capo','Capó')"/>
+                <rect class="damage-zone" id="dz_porton" x="30" y="65" width="60" height="45" rx="6" fill="transparent" stroke="transparent" stroke-width="8" onclick="clickDamagezone('porton','Portón trasero')"/>
+                <path class="damage-zone" id="dz_techo" d="M80 60 Q100 20 200 20 Q220 20 240 60 Z" fill="transparent" stroke="transparent" stroke-width="8" onclick="clickDamagezone('techo','Techo')"/>
+                <rect class="damage-zone" id="dz_paragolpes_del" x="272" y="80" width="18" height="30" rx="5" fill="transparent" stroke="transparent" stroke-width="8" onclick="clickDamagezone('paragolpes_del','Paragolpes delantero')"/>
+                <rect class="damage-zone" id="dz_paragolpes_tra" x="10" y="80" width="18" height="30" rx="5" fill="transparent" stroke="transparent" stroke-width="8" onclick="clickDamagezone('paragolpes_tra','Paragolpes trasero')"/>
+                <!-- Puertas (zonas laterales) -->
+                <rect class="damage-zone" id="dz_puerta_dd" x="155" y="65" width="45" height="55" rx="3" fill="transparent" stroke="transparent" stroke-width="8" onclick="clickDamagezone('puerta_dd','Puerta delantera dcha.')"/>
+                <rect class="damage-zone" id="dz_puerta_td" x="105" y="65" width="45" height="55" rx="3" fill="transparent" stroke="transparent" stroke-width="8" onclick="clickDamagezone('puerta_td','Puerta trasera dcha.')"/>
+                <!-- Labels -->
+                <text x="235" y="93" text-anchor="middle" font-size="8" fill="#5c7a9e" font-family="sans-serif" pointer-events="none">Capó</text>
+                <text x="60" y="93" text-anchor="middle" font-size="8" fill="#5c7a9e" font-family="sans-serif" pointer-events="none">Portón</text>
+                <text x="150" y="45" text-anchor="middle" font-size="8" fill="#5c7a9e" font-family="sans-serif" pointer-events="none">Techo</text>
+                <text x="178" y="93" text-anchor="middle" font-size="7" fill="#5c7a9e" font-family="sans-serif" pointer-events="none">P. Del.</text>
+                <text x="128" y="93" text-anchor="middle" font-size="7" fill="#5c7a9e" font-family="sans-serif" pointer-events="none">P. Tra.</text>
+              </svg>
+            </div>
+            <!-- Daños registrados -->
+            <div id="danosBadges" style="margin-top:10px;min-height:30px"></div>
+
+            <!-- Piezas adicionales -->
+            <label class="flabel" style="margin-top:12px">Añadir piezas manualmente</label>
+            <div class="piezas-grid" style="margin-top:6px" id="piezasAltaGrid"></div>
+          </div>
+        </div>
+
+        <!-- 5. TRABAJOS A REALIZAR -->
+        <div class="rec-section">
+          <div class="rec-section-head"><span class="rs-ico">🔧</span><span class="rs-title">Trabajos a realizar</span></div>
+          <div class="rec-section-body">
+            <div class="tipo-grid cols2" style="margin-top:4px">
+              <div class="tipo-opt" onclick="this.classList.toggle('selected')"><span class="to-ico">🔨</span><span class="to-lbl">Desabollado</span></div>
+              <div class="tipo-opt" onclick="this.classList.toggle('selected')"><span class="to-ico">🧱</span><span class="to-lbl">Reparación plásticos</span></div>
+              <div class="tipo-opt" onclick="this.classList.toggle('selected')"><span class="to-ico">🪚</span><span class="to-lbl">Enmasillado</span></div>
+              <div class="tipo-opt" onclick="this.classList.toggle('selected')"><span class="to-ico">🪣</span><span class="to-lbl">Aparejado</span></div>
+              <div class="tipo-opt" onclick="this.classList.toggle('selected')"><span class="to-ico">🎨</span><span class="to-lbl">Pintado</span></div>
+              <div class="tipo-opt" onclick="this.classList.toggle('selected')"><span class="to-ico">✨</span><span class="to-lbl">Barnizado</span></div>
+              <div class="tipo-opt" onclick="this.classList.toggle('selected')"><span class="to-ico">🔍</span><span class="to-lbl">Corrección defectos</span></div>
+              <div class="tipo-opt" onclick="this.classList.toggle('selected')"><span class="to-ico">🔄</span><span class="to-lbl">Sustitución pieza</span></div>
+            </div>
+            <label class="flabel" style="margin-top:12px">📝 Descripción de los trabajos</label>
+            <textarea class="finput" id="rv_trabajos" rows="3" placeholder="Describe detalladamente los trabajos a realizar..."></textarea>
+            <label class="flabel">💶 Presupuesto estimado</label>
+            <input class="finput" id="rv_presupuesto" placeholder="0,00 €" type="number">
+          </div>
+        </div>
+
+        <!-- 6. FOTOS DE RECEPCIÓN -->
+        <div class="rec-section">
+          <div class="rec-section-head"><span class="rs-ico">📸</span><span class="rs-title">Fotos de recepción (4 ángulos)</span></div>
+          <div class="rec-section-body">
+            <div class="foto-grid">
+              <div class="foto-slot" id="fslot_frontal" onclick="triggerFotoVehiculo('frontal')">
+                <span class="foto-slot-icon">📷</span>
+                <span class="foto-slot-label">🔼 Frontal</span>
+                <input type="file" accept="image/*" capture="environment" id="finput_frontal" style="display:none" onchange="handleFotoVehiculo(this,'frontal')">
+              </div>
+              <div class="foto-slot" id="fslot_trasera" onclick="triggerFotoVehiculo('trasera')">
+                <span class="foto-slot-icon">📷</span>
+                <span class="foto-slot-label">🔽 Trasera</span>
+                <input type="file" accept="image/*" capture="environment" id="finput_trasera" style="display:none" onchange="handleFotoVehiculo(this,'trasera')">
+              </div>
+              <div class="foto-slot" id="fslot_lateral_d" onclick="triggerFotoVehiculo('lateral_d')">
+                <span class="foto-slot-icon">📷</span>
+                <span class="foto-slot-label">▶️ Lateral dcha.</span>
+                <input type="file" accept="image/*" capture="environment" id="finput_lateral_d" style="display:none" onchange="handleFotoVehiculo(this,'lateral_d')">
+              </div>
+              <div class="foto-slot" id="fslot_lateral_i" onclick="triggerFotoVehiculo('lateral_i')">
+                <span class="foto-slot-icon">📷</span>
+                <span class="foto-slot-label">◀️ Lateral izda.</span>
+                <input type="file" accept="image/*" capture="environment" id="finput_lateral_i" style="display:none" onchange="handleFotoVehiculo(this,'lateral_i')">
+              </div>
+            </div>
+            <label class="flabel" style="margin-top:12px">📝 Observaciones de recepción</label>
+            <textarea class="finput" id="rv_obs" rows="2" placeholder="Estado general, daños previos no listados, accesorios especiales..."></textarea>
+          </div>
+        </div>
+
+        <button class="btn btn-success btn-full" onclick="guardarVehiculo()" style="margin-bottom:16px">✅ Guardar ficha del vehículo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANTALLA: HISTORIAL -->
+  <div class="screen" id="screenHistorial">
+    <div class="main-content">
+      <div class="section-title">📚 Mi historial completo</div>
+      <div id="historialList"></div>
+    </div>
+  </div>
+
+  <!-- PANTALLA: EXPORTAR -->
+  <div class="screen" id="screenExportar">
+    <div class="main-content">
+      <div class="export-section">
+        <h3>📤 Enviar al profesor</h3>
+        <p>Exporta tu cuaderno de prácticas completo y envíaselo al profesor por WhatsApp para que evalúe tu trabajo.</p>
+        <button class="export-btn-big" onclick="exportarCuaderno()">📤 Exportar cuaderno completo</button>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-head-ico">📊</span><div><div class="card-head-title">Resumen de tu cuaderno</div></div></div>
+        <div class="card-body" id="resumenExport"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="bnav-tab active" id="bnav0" onclick="showScreen('screenRegistro',0)">
+      <div class="bnav-indicator"></div>
+      <span class="bnav-icon">📋</span>
+      <span class="bnav-lbl">Registro</span>
+    </button>
+    <button class="bnav-tab" id="bnav1" onclick="showScreen('screenVehiculo',1)">
+      <div class="bnav-indicator"></div>
+      <span class="bnav-icon">🚗</span>
+      <span class="bnav-lbl">Vehículo</span>
+    </button>
+    <button class="bnav-tab" id="bnav2" onclick="showScreen('screenHistorial',2)">
+      <div class="bnav-indicator"></div>
+      <span class="bnav-icon">📚</span>
+      <span class="bnav-lbl">Historial</span>
+    </button>
+    <button class="bnav-tab" id="bnav3" onclick="showScreen('screenExportar',3)">
+      <div class="bnav-indicator"></div>
+      <span class="bnav-icon">📤</span>
+      <span class="bnav-lbl">Exportar</span>
+    </button>
+  </nav>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <div class="lightbox-close">✕</div>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<script>
+// ════════════════════════════════════════════
+// STORAGE
+// ════════════════════════════════════════════
+var K = {
+  alumno: 'tl2_alumno',
+  vehiculos: 'tl2_vehiculos',
+  registros: 'tl2_registros',
+};
+function lS(k){ try{ var r=localStorage.getItem(k); return r?JSON.parse(r):null; }catch(e){ return null; } }
+function sS(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+
+// ════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════
+var currentAlumno = null;
+var currentStep = 0;
+var selVehiculo = null;
+var selPiezas = {};   // {piezaNombre: {dano:'leve'}}
+var selProceso = null;
+var selHoras = [];
+var checkState = {};
+var epiState = {};
+var ordenState = {};
+var fotoJornada = null;
+var fotosVehiculo = {};
+var danosVehiculo = {};
+var condVehiculo = {};
+var fuelVehiculo = null;
+var tipoCarroceria = null;
+var tipoEntrada = null;
+var estadoCristal = null;
+
+var TODAS_PIEZAS = ['Capó','Portón trasero','Techo','Aleta delantera derecha','Aleta delantera izquierda',
+  'Puerta delantera derecha','Puerta delantera izquierda','Puerta trasera derecha','Puerta trasera izquierda',
+  'Aleta trasera derecha','Aleta trasera izquierda','Paragolpes delantero','Paragolpes trasero'];
+
+var PROCESOS = {
+  desabollado:{icon:'🔨',name:'Desabollado'},
+  plasticos:{icon:'🧱',name:'Reparación plásticos'},
+  enmasillado:{icon:'🪚',name:'Enmasillado'},
+  aparejado:{icon:'🪣',name:'Aparejado'},
+  enmascarado:{icon:'🎭',name:'Enmascarado'},
+  limpieza:{icon:'🧹',name:'Limpieza y desengrasado'},
+  pintado:{icon:'🎨',name:'Pintado'},
+  barnizado:{icon:'✨',name:'Barnizado'},
+  correccion:{icon:'🔍',name:'Corrección de defectos'}
+};
+
+var EPIS_LIST = [
+  {k:'ropa',icon:'👷',lbl:'Ropa trabajo'},
+  {k:'botas',icon:'🥾',lbl:'Botas seguridad'},
+  {k:'guantes',icon:'🧤',lbl:'Guantes'},
+  {k:'gafas',icon:'🥽',lbl:'Gafas'},
+  {k:'casco',icon:'⛑️',lbl:'Casco'},
+  {k:'mascarilla',icon:'😷',lbl:'Mascarilla'}
+];
+
+// ════════════════════════════════════════════
+// LOGIN
+// ════════════════════════════════════════════
+window.onload = function(){
+  var saved = lS(K.alumno);
+  if(saved){ currentAlumno = saved; startApp(); return; }
+  renderLoginExisting();
+};
+
+function renderLoginExisting(){
+  // No hay alumnos previos en este dispositivo
+  document.getElementById('loginExistingWrap').style.display='none';
+}
+
+function doLogin(){
+  var nombre = document.getElementById('loginNombre').value.trim();
+  if(!nombre){ alert('Escribe tu nombre para continuar.'); return; }
+  currentAlumno = { id: 'al_'+Date.now(), nombre: nombre, fechaAlta: new Date().toLocaleDateString('es-ES') };
+  sS(K.alumno, currentAlumno);
+  startApp();
+}
+
+function startApp(){
+  document.getElementById('loginPage').style.display='none';
+  document.getElementById('appShell').classList.add('visible');
+  document.getElementById('headerUser').innerHTML = '👷 ' + currentAlumno.nombre.split(' ')[0];
+  updateDashboard();
+  renderVehiculosExistentes();
+  renderHistorial();
+  renderResumenExport();
+}
+
+function showLogoutConfirm(){
+  if(confirm('¿Cerrar sesión? Tu cuaderno quedará guardado en este móvil.')){
+    sS(K.alumno, null);
+    location.reload();
+  }
+}
+
+// ════════════════════════════════════════════
+// NAVEGACIÓN
+// ════════════════════════════════════════════
+function showScreen(screenId, navIdx){
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  document.querySelectorAll('.bnav-tab').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById(screenId).classList.add('active');
+  document.getElementById('bnav'+navIdx).classList.add('active');
+  document.getElementById('progressBar').style.display = (screenId==='screenRegistro' && currentStep>0 && currentStep<4) ? 'block' : 'none';
+}
+
+function irPaso(n){
+  currentStep = n;
+  ['paso0','paso1','paso2','paso3','paso4'].forEach(function(p){
+    document.getElementById(p).style.display='none';
+  });
+  document.getElementById('paso'+n).style.display='block';
+  updateProgress(n);
+  document.getElementById('progressBar').style.display = (n>0 && n<4) ? 'block' : 'none';
+  window.scrollTo(0,0);
+
+  if(n===1) renderPiezasRegistro();
+  if(n===3) renderChecklist();
+  if(n===4){ updateDashboard(); renderHistorial(); renderResumenExport(); }
+}
+
+function updateProgress(n){
+  var pcts = {0:0,1:20,2:50,3:75,4:100};
+  var labels = {1:'Paso 1 de 3 — Vehículo y piezas',2:'Paso 2 de 3 — Proceso y horas',3:'Paso 3 de 3 — Checklist y fotos'};
+  var pct = pcts[n]||0;
+  document.getElementById('progressFill').style.width = pct+'%';
+  document.getElementById('progressPct').textContent = pct+'%';
+  document.getElementById('progressLabel').textContent = labels[n]||'';
+  // step dots
+  for(var i=1;i<=3;i++){
+    var el = document.getElementById('stepDots'+i>1?'stepDots'+(i===2?'2':'3'):'stepDots');
+  }
+  renderStepDots(n);
+}
+
+function renderStepDots(n){
+  ['stepDots','stepDots2','stepDots3'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(!el) return;
+    var html='';
+    for(var i=1;i<=3;i++){
+      var cls = i<n?'done':i===n?'active':'';
+      html += '<div class="step-dot '+cls+'"></div>';
+    }
+    el.innerHTML=html;
+  });
+}
+
+// ════════════════════════════════════════════
+// DASHBOARD
+// ════════════════════════════════════════════
+function updateDashboard(){
+  var regs = lS(K.registros)||[];
+  var jornadas = regs.length;
+  var horas = regs.reduce(function(s,r){ return s+(Array.isArray(r.horas)?r.horas.reduce(function(a,b){return a+b;},0):0); },0);
+  var totalCheck=0, doneCheck=0;
+  regs.forEach(function(r){
+    if(r.checkTotal){ totalCheck+=r.checkTotal; doneCheck+=r.checkDone; }
+  });
+  document.getElementById('statJornadas').textContent=jornadas;
+  document.getElementById('statHoras').textContent=horas;
+  document.getElementById('statCheck').textContent=totalCheck>0?Math.round(doneCheck/totalCheck*100)+'%':'—';
+  renderUltimasJornadas();
+}
+
+function renderUltimasJornadas(){
+  var regs = (lS(K.registros)||[]).slice().reverse().slice(0,3);
+  var wrap = document.getElementById('ultimasJornadas');
+  if(!regs.length){
+    wrap.innerHTML='<div class="empty-state"><span class="es-icon">📝</span><p>Aún no tienes jornadas registradas.<br>¡Empieza tu primera práctica!</p></div>';
+    return;
+  }
+  wrap.innerHTML = regs.map(function(r){
+    var p=PROCESOS[r.proceso]||{icon:'🔧',name:r.proceso};
+    return '<div class="reg-card"><div class="reg-head">'+
+      '<span>📅</span><span class="reg-fecha">'+r.fecha+'</span>'+
+      '<span class="reg-fase-badge">'+p.icon+' '+p.name+'</span>'+
+      '<span class="reg-status pendiente" style="margin-left:auto">⏳ Pendiente</span>'+
+      '</div><div class="reg-body">⏱️ '+( Array.isArray(r.horas)?r.horas.reduce(function(a,b){return a+b;},0):0)+'h &nbsp;·&nbsp; 🔩 '+r.piezasTexto+'</div></div>';
+  }).join('');
+}
+
+// ════════════════════════════════════════════
+// REGISTRO — PASO 1: VEHÍCULOS Y PIEZAS
+// ════════════════════════════════════════════
+function renderPiezasRegistro(){
+  selVehiculo=null; selPiezas={};
+  var vehiculos = lS(K.vehiculos)||[];
+  var wrap = document.getElementById('vehiculosListReg');
+  if(!vehiculos.length){
+    wrap.innerHTML='<div style="background:var(--warning-bg);border:1px solid var(--warning-border);border-radius:var(--radius-sm);padding:14px;font-size:13px;color:var(--warning);font-weight:700">⚠️ Primero debes dar de alta tu vehículo en la pestaña 🚗 Vehículo</div>';
+    document.getElementById('btnSig1').disabled=true;
+    document.getElementById('piezasWrap').style.display='none';
+    return;
+  }
+  wrap.innerHTML = vehiculos.map(function(v){
+    return '<div class="vehiculo-card" id="vcard_'+v.id+'" onclick="selectVehiculoReg(\''+v.id+'\')">'+
+      '<span class="vc-ico">🚗</span>'+
+      '<div class="vc-info"><div class="vc-name">'+v.marca+' '+v.modelo+' '+v.anio+'</div>'+
+      '<div class="vc-sub">🔖 '+v.matricula+'</div></div>'+
+      '<div class="vc-check">✓</div></div>';
+  }).join('');
+  document.getElementById('piezasWrap').style.display='none';
+  document.getElementById('btnSig1').disabled=true;
+}
+
+function selectVehiculoReg(id){
+  var vehiculos = lS(K.vehiculos)||[];
+  selVehiculo = vehiculos.find(function(v){ return v.id===id; });
+  document.querySelectorAll('.vehiculo-card').forEach(function(c){ c.classList.remove('active'); });
+  document.getElementById('vcard_'+id).classList.add('active');
+  renderPiezasChips();
+  document.getElementById('piezasWrap').style.display='block';
+}
+
+function renderPiezasChips(){
+  var piezas = selVehiculo ? (selVehiculo.piezas||[]) : [];
+  var grid = document.getElementById('piezasGrid');
+  grid.innerHTML = piezas.map(function(p){
+    var slug = p.replace(/\s+/g,'_');
+    return '<div class="pieza-chip" id="pchip_'+slug+'" onclick="togglePieza(\''+p+'\')">'+
+      '<span class="pc-check">✓</span> '+p+'</div>';
+  }).join('');
+  document.getElementById('danoWrap').innerHTML='';
+  document.getElementById('danoWrap').classList.remove('visible');
+  checkSig1();
+}
+
+function togglePieza(nombre){
+  if(selPiezas[nombre]){
+    delete selPiezas[nombre];
+  } else {
+    selPiezas[nombre]={dano:'leve'};
+  }
+  var slug=nombre.replace(/\s+/g,'_');
+  var chip=document.getElementById('pchip_'+slug);
+  if(chip) chip.classList.toggle('selected', !!selPiezas[nombre]);
+  renderDanoSelectors();
+  checkSig1();
+}
+
+function renderDanoSelectors(){
+  var piezasSel = Object.keys(selPiezas);
+  var wrap = document.getElementById('danoWrap');
+  if(!piezasSel.length){ wrap.innerHTML=''; wrap.classList.remove('visible'); return; }
+  wrap.classList.add('visible');
+  wrap.innerHTML = '<div style="font-size:11px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Nivel de daño por pieza</div>'+
+    piezasSel.map(function(p){
+      var d=selPiezas[p].dano||'leve';
+      return '<div style="margin-bottom:8px">'+
+        '<div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">🔩 '+p+'</div>'+
+        '<div class="dano-opts">'+
+          '<div class="dano-opt'+(d==='leve'?' sel':'')+'" data-v="leve" onclick="setDano(\''+p+'\',\'leve\',this)">🟡 Leve</div>'+
+          '<div class="dano-opt'+(d==='medio'?' sel':'')+'" data-v="medio" onclick="setDano(\''+p+'\',\'medio\',this)">🟠 Medio</div>'+
+          '<div class="dano-opt'+(d==='fuerte'?' sel':'')+'" data-v="fuerte" onclick="setDano(\''+p+'\',\'fuerte\',this)">🔴 Fuerte</div>'+
+        '</div></div>';
+    }).join('');
+}
+
+function setDano(pieza, valor, el){
+  selPiezas[pieza].dano=valor;
+  var parent=el.parentElement;
+  parent.querySelectorAll('.dano-opt').forEach(function(o){ o.classList.remove('sel'); });
+  el.classList.add('sel');
+}
+
+function checkSig1(){
+  var ok = selVehiculo && Object.keys(selPiezas).length>0;
+  document.getElementById('btnSig1').disabled=!ok;
+}
+
+// ════════════════════════════════════════════
+// REGISTRO — PASO 2: PROCESO Y HORAS
+// ════════════════════════════════════════════
+function selectProceso(el, key){
+  document.querySelectorAll('.proceso-opt').forEach(function(o){ o.classList.remove('selected'); });
+  el.classList.add('selected');
+  selProceso=key;
+  checkSig2();
+}
+
+function toggleHora(el, n){
+  el.classList.toggle('selected');
+  if(el.classList.contains('selected')){
+    if(selHoras.indexOf(n)<0) selHoras.push(n);
+  } else {
+    selHoras=selHoras.filter(function(h){ return h!==n; });
+  }
+  checkSig2();
+}
+
+function checkSig2(){
+  var ok = selProceso && selHoras.length>0;
+  document.getElementById('btnSig2').disabled=!ok;
+}
+
+// ════════════════════════════════════════════
+// REGISTRO — PASO 3: CHECKLIST
+// ════════════════════════════════════════════
+var CHECKLISTS_DATA = {
+  desabollado:{
+    secciones:[
+      {titulo:'🔨 Desabollado manual', items:[
+        {k:'d_ident',lbl:'Identificación del tipo y extensión del daño antes de intervenir'},
+        {k:'d_tecnica',lbl:'Selección de la técnica correcta según la deformación'},
+        {k:'d_progresivo',lbl:'Trabajo progresivo desde el exterior hacia el centro del daño'},
+        {k:'d_herramienta',lbl:'Uso correcto de palancas, tas y martillos sin dañar el reverso'},
+        {k:'d_luz',lbl:'Verificación del resultado con luz rasante'},
+        {k:'d_tension',lbl:'Comprobación de que no quedan tensiones ni marcas de herramienta'},
+      ]},
+      {titulo:'⚡ Desabollado con spotter (multifunción)', items:[
+        {k:'d_equipo',lbl:'Comprobación del equipo antes de usar (cables, pinzas, tierra)'},
+        {k:'d_intensidad',lbl:'Regulación correcta de intensidad según grosor de chapa'},
+        {k:'d_electrodos',lbl:'Uso de electrodos y accesorios adecuados al tipo de daño'},
+        {k:'d_traccion',lbl:'Aplicación de calor controlado y tracción progresiva'},
+        {k:'d_enfriamiento',lbl:'Enfriamiento correcto de la zona tratada'},
+        {k:'d_resultado',lbl:'Resultado sin perforaciones, quemaduras ni deformaciones adicionales'},
+      ]},
+    ],
+    extras:['herramientas','ajustes']
+  },
+  plasticos:{
+    secciones:[
+      {titulo:'🔍 Identificación del plástico', items:[]},
+      {titulo:'🛠️ Proceso de reparación', items:[
+        {k:'pl_limpieza',lbl:'Limpieza y desengrasado previo de la zona a reparar'},
+        {k:'pl_bordes',lbl:'Preparación de los bordes para mejorar la adherencia'},
+        {k:'pl_aplicacion',lbl:'Aplicación correcta del método seleccionado'},
+        {k:'pl_refuerzo',lbl:'Aplicación de refuerzo por la cara interior si es necesario'},
+        {k:'pl_rigidez',lbl:'Comprobación de rigidez y continuidad de la reparación'},
+        {k:'pl_acabado',lbl:'Acabado superficial listo para el siguiente proceso'},
+      ]},
+    ],
+    extras:['codigo_plastico','tipo_plastico','metodo_reparacion']
+  },
+  enmasillado:{
+    secciones:[
+      {titulo:'🪚 Proceso de enmasillado', items:[
+        {k:'em_limpieza',lbl:'Limpieza y desengrasado de las superficies a tratar'},
+        {k:'em_escalon',lbl:'Eliminación de bordes y escalón en la pintura vieja'},
+        {k:'em_proporcion_check',lbl:'Preparación de masilla respetando las proporciones de mezcla'},
+        {k:'em_espesores',lbl:'Aplicación respetando espesores de capa y tiempos de secado'},
+        {k:'em_tipo_sup',lbl:'Aplicación adecuada al tipo de superficie'},
+        {k:'em_equipos',lbl:'Uso de equipos, zonas y herramientas adecuadas'},
+        {k:'em_lijado_check',lbl:'Lijado de zonas enmasilladas según tipo de superficie y abrasivo'},
+        {k:'em_guias',lbl:'Empleo de guías de lijado en los procesos de igualación'},
+        {k:'em_calidad',lbl:'Verificación del acabado cumpliendo los estándares de calidad'},
+        {k:'em_ficha',lbl:'Interpretación de la documentación técnica del fabricante'},
+      ]},
+    ],
+    extras:['tipo_masilla','proporcion_masilla','tsecado','escala_lijado','metodo_lijado','ir_secado']
+  },
+  aparejado:{
+    secciones:[
+      {titulo:'🪣 Proceso de aparejado', items:[
+        {k:'ap_seleccion',lbl:'Selección del tipo de aparejo según la superficie'},
+        {k:'ap_enmascarado',lbl:'Comprobación del enmascarado de zonas adyacentes'},
+        {k:'ap_equipos',lbl:'Selección de equipos y ajuste de parámetros'},
+        {k:'ap_mezcla_check',lbl:'Mezcla aparejo/catalizador/diluyente respetando proporciones del fabricante'},
+        {k:'ap_preparacion',lbl:'Preparación superficie: lijado, desengrasado y atrapapolvos'},
+        {k:'ap_aplicacion_check',lbl:'Aplicación respetando tiempos de evaporación entre manos'},
+        {k:'ap_pistola',lbl:'Técnicas de aplicación con pistola aerográfica'},
+        {k:'ap_secado',lbl:'Técnicas de secado y acabado final'},
+        {k:'ap_lijado_final',lbl:'Lijados necesarios para las características dimensionales finales'},
+        {k:'ap_calidad',lbl:'Verificación de la superficie aparejada para capas de embellecimiento'},
+      ]},
+    ],
+    extras:['marca_aparejo','catalizador','diluyente','metodo_mezcla','pico_pistola','modo_aplicacion','tsecado_aparejo','tono_aparejo','ir_aparejo']
+  },
+  enmascarado:{
+    secciones:[
+      {titulo:'🎭 Proceso de enmascarado', items:[
+        {k:'enm_zonas',lbl:'Identificación de las zonas que es preciso enmascarar'},
+        {k:'enm_materiales',lbl:'Selección de materiales, útiles y herramientas necesarios'},
+        {k:'enm_parcial',lbl:'Enmascarados parciales y totales realizados correctamente'},
+        {k:'enm_interiores',lbl:'Enmascarado de interiores y exteriores'},
+        {k:'enm_cristales',lbl:'Enmascarado de cristales, lunas y espejos'},
+        {k:'enm_bordes',lbl:'Especial cuidado en el enmascarado de bordes y aristas'},
+        {k:'enm_residuos',lbl:'Clasificación de residuos generados para retirada selectiva'},
+        {k:'enm_compatibilidad',lbl:'Verificación de compatibilidad con los productos a aplicar'},
+        {k:'enm_proteccion',lbl:'Verificación de la protección necesaria y calidad requerida'},
+      ]},
+    ],
+    extras:['tipo_enmascarado','materiales_enmascarado']
+  },
+  limpieza:{
+    secciones:[
+      {titulo:'🧹 Proceso de limpieza y desengrasado', items:[
+        {k:'lim_sup',lbl:'Limpieza y desengrasado correcto de todas las superficies'},
+        {k:'lim_producto',lbl:'Producto de limpieza adecuado para el tipo de superficie'},
+        {k:'lim_orden',lbl:'Zona de trabajo limpia y ordenada al finalizar'},
+      ]},
+    ],
+    extras:['producto_limpieza']
+  },
+  pintado:{
+    secciones:[
+      {titulo:'🎨 Proceso de pintado', items:[
+        {k:'pi_codigo',lbl:'Identificación del código de color según documentación técnica'},
+        {k:'pi_productos',lbl:'Selección de productos para la mezcla (base agua/disolvente)'},
+        {k:'pi_mezcla',lbl:'Mezcla con proporciones y viscosidad correctas (balanza electrónica)'},
+        {k:'pi_cataliza',lbl:'Activación y catalización según especificaciones técnicas'},
+        {k:'pi_seguridad',lbl:'Trabajo realizado con seguridad, precisión, orden y limpieza'},
+        {k:'pi_manos',lbl:'Número de manos aplicadas respetando tiempos de evaporación'},
+        {k:'pi_viscosidad',lbl:'Viscosidad estipulada lograda antes de la aplicación'},
+      ]},
+    ],
+    extras:['acabado_pintura','efecto_pintura','codigo_color','formula_basicos','cantidad_formulada','pistola_pint','presion_trabajo','pico_fluido_pint','num_manos_pint','vida_util_pint','tsecado_pint','cov_pint']
+  },
+  barnizado:{
+    secciones:[
+      {titulo:'✨ Proceso de barnizado', items:[
+        {k:'ba_documentacion',lbl:'Interpretación de la documentación técnica del fabricante'},
+        {k:'ba_productos',lbl:'Selección de productos para la mezcla'},
+        {k:'ba_mezcla',lbl:'Mezcla con proporciones y viscosidad correctas'},
+        {k:'ba_prueba',lbl:'Prueba de ajuste de color en la cámara cromática'},
+        {k:'ba_cataliza',lbl:'Activación y catalización según especificaciones técnicas'},
+        {k:'ba_calidad',lbl:'Trabajo realizado con seguridad, precisión, orden y limpieza'},
+      ]},
+    ],
+    extras:['producto_barniz','catalizador_barn','diluyente_barn','pistola_barn','pico_barn','num_manos_barn','evap_manos_barn','vida_util_barn','tevap_barn','cov_barn']
+  },
+  correccion:{
+    secciones:[
+      {titulo:'🔍 Corrección de defectos', items:[
+        {k:'co_localiza',lbl:'Localización del defecto y decisión del proceso de reparación'},
+        {k:'co_equipos',lbl:'Uso de equipos, útiles y herramientas necesarias'},
+        {k:'co_tecnica',lbl:'Reparación de defectos por técnica inadecuada de aplicación'},
+        {k:'co_superficie',lbl:'Reparación de defectos por superficies mal preparadas'},
+        {k:'co_factores',lbl:'Reparación de defectos por factores climáticos, mecánicos o biológicos'},
+        {k:'co_pulido',lbl:'Pulido y abrillantado devolviendo la calidad requerida'},
+        {k:'co_normas',lbl:'Respeto de las normas de utilización de equipos e instalaciones'},
+      ]},
+    ],
+    extras:['tipo_defecto','proceso_corr','productos_corr','utiles_corr']
+  }
+};
+
+function renderChecklist(){
+  checkState={}; epiState={}; ordenState={};
+  var proc = selProceso;
+  var data = CHECKLISTS_DATA[proc];
+  var p = PROCESOS[proc]||{icon:'🔧',name:proc};
+
+  document.getElementById('checklistIcon').textContent = p.icon;
+  document.getElementById('checklistTitle').textContent = p.name;
+  document.getElementById('checklistSub').textContent = 'Documenta paso a paso tu trabajo de hoy';
+
+  var body = document.getElementById('checklistBody');
+  var html = '';
+
+  if(data){
+    data.secciones.forEach(function(sec){
+      html += '<div class="cl-section"><div class="cl-section-title">'+sec.titulo+'</div>';
+      sec.items.forEach(function(item){
+        checkState[item.k]=false;
+        html += '<div class="cl-item" id="cli_'+item.k+'" onclick="toggleCheck(\''+item.k+'\')">'+
+          '<div class="cl-box" id="clb_'+item.k+'"></div>'+
+          '<span class="cl-label">'+item.lbl+'</span></div>';
+      });
+      html += '</div>';
+    });
+
+    // EXTRAS según proceso
+    if(data.extras) data.extras.forEach(function(ex){ html += renderExtra(ex, proc); });
+  }
+
+  body.innerHTML = html;
+
+  // EPIs
+  var episHtml = EPIS_LIST.map(function(e){
+    return '<div class="epi-opt" id="epi_'+e.k+'" onclick="toggleEpi(\''+e.k+'\')">'+
+      '<span class="epi-ico">'+e.icon+'</span><span class="epi-lbl">'+e.lbl+'</span></div>';
+  }).join('');
+  document.getElementById('episGrid').innerHTML = episHtml;
+
+  // Orden y limpieza
+  var ordenHtml = [
+    {k:'orden_puesto',ico:'🧹',lbl:'He recogido y ordenado el puesto de trabajo'},
+    {k:'orden_herr',ico:'🔧',lbl:'He limpiado las herramientas y las he guardado en su lugar'}
+  ].map(function(o){
+    ordenState[o.k]=false;
+    return '<div class="cl-item" id="ord_'+o.k+'" onclick="toggleOrden(\''+o.k+'\')">'+
+      '<div class="cl-box" id="ordb_'+o.k+'"></div>'+
+      '<span class="cl-icon">'+o.ico+'</span>'+
+      '<span class="cl-label">'+o.lbl+'</span></div>';
+  }).join('');
+  document.getElementById('ordenBody').innerHTML = ordenHtml;
+}
+
+function renderExtra(ex, proc){
+  var h='';
+  if(ex==='herramientas'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">🔧 Herramientas utilizadas</div>'+
+      '<input class="finput" id="ex_herramientas" placeholder="ej: multifunción, martillo plancha, tas redonda..." oninput="checkState.herramientas=this.value"></div>';
+  } else if(ex==='ajustes'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">⚙️ Ajustes del equipo (intensidad, tiempo)</div>'+
+      '<input class="finput" id="ex_ajustes" placeholder="ej: Intensidad 3, 5 ciclos de 2s..." oninput="checkState.ajustes=this.value"></div>';
+  } else if(ex==='codigo_plastico'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">🏷️ Código de identificación del plástico</div>'+
+      '<input class="finput" id="ex_cod_pl" placeholder="ej: PP, ABS, PC, PBT..." oninput="checkState.cod_plastico=this.value">'+
+      '<div style="margin-top:8px;font-size:11px;color:var(--text-dim)">Búscalo en el reverso de la pieza o en la documentación técnica</div></div>';
+  } else if(ex==='tipo_plastico'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">🧱 Tipo de plástico</div>'+
+      '<div class="tipo-grid cols2" style="margin-top:6px">'+
+      ['PP — Polipropileno','ABS — Acrilonitrilo','PC — Policarbonato','PA — Poliamida (nylon)'].map(function(t,i){
+        var k='tpl_'+i; checkState[k]=false;
+        return '<div class="tipo-opt" id="to_'+k+'" onclick="toggleTipoOpt(\''+k+'\')" ><span class="to-ico">'+(i===0?'⬜':i===1?'🟦':i===2?'🔷':'🔲')+'</span><span class="to-lbl">'+t+'</span></div>';
+      }).join('')+'</div></div>';
+  } else if(ex==='metodo_reparacion'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">🛠️ Método de reparación utilizado</div>'+
+      '<div class="tipo-grid cols2" style="margin-top:6px">'+
+      [{ico:'🔥',lbl:'Soldadura plástica'},{ico:'🧪',lbl:'Adhesivo bicomponente'},{ico:'🪢',lbl:'Grapas de anclaje'},{ico:'🧴',lbl:'Masilla de plástico'}].map(function(m,i){
+        var k='mpl_'+i; checkState[k]=false;
+        return '<div class="tipo-opt" id="to_'+k+'" onclick="toggleTipoOpt(\''+k+'\')" ><span class="to-ico">'+m.ico+'</span><span class="to-lbl">'+m.lbl+'</span></div>';
+      }).join('')+'</div></div>';
+  } else if(ex==='tipo_masilla'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">🟡 Tipo de masilla utilizada</div>'+
+      '<div class="tipo-grid cols2" style="margin-top:6px">'+
+      [{ico:'🟡',lbl:'Masilla de poliéster'},{ico:'🟢',lbl:'Masilla de plástico'},{ico:'🔵',lbl:'Masilla de fibra de vidrio'},{ico:'⚪',lbl:'Otra'}].map(function(m,i){
+        var k='tmas_'+i; checkState[k]=false;
+        return '<div class="tipo-opt" id="to_'+k+'" onclick="toggleTipoOpt(\''+k+'\')" ><span class="to-ico">'+m.ico+'</span><span class="to-lbl">'+m.lbl+'</span></div>';
+      }).join('')+'</div>'+
+      '<input class="finput" style="margin-top:8px" id="ex_masilla_otra" placeholder="Si elegiste Otra, descríbela aquí..." oninput="checkState.masilla_otra=this.value"></div>';
+  } else if(ex==='proporcion_masilla'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">⚗️ Proporción de mezcla (masilla / endurecedor)</div>'+
+      '<input class="finput" id="ex_prop_mas" placeholder="ej: 100g masilla + 3% endurecedor" oninput="checkState.prop_masilla=this.value"></div>';
+  } else if(ex==='tsecado'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">⏱️ Tiempo de secado indicado por fabricante</div>'+
+      '<input class="finput" id="ex_tsec" placeholder="ej: 20 min a 20°C / 8 min con IR" oninput="checkState.tsecado=this.value"></div>';
+  } else if(ex==='escala_lijado'){
+    var granos=['P80','P120','P180','P220','P320','P400','P600','P800'];
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">📊 Escala de lijado utilizada</div>'+
+      '<div class="tipo-grid cols4" style="margin-top:6px">'+
+      granos.map(function(g){
+        var k='lija_'+g; checkState[k]=false;
+        return '<div class="tipo-opt" id="to_'+k+'" onclick="toggleTipoOpt(\''+k+'\')" ><span class="to-lbl" style="font-size:15px;font-weight:900">'+g+'</span></div>';
+      }).join('')+'</div></div>';
+  } else if(ex==='metodo_lijado'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">🤚 Método de lijado</div>'+
+      '<div class="tipo-grid cols2" style="margin-top:6px">'+
+      [{ico:'🤚',lbl:'A mano con taco'},{ico:'🔧',lbl:'A máquina'}].map(function(m,i){
+        var k='metlij_'+i; checkState[k]=false;
+        return '<div class="tipo-opt" id="to_'+k+'" onclick="toggleTipoLijado(\''+k+'\',\''+m.lbl+'\')" ><span class="to-ico">'+m.ico+'</span><span class="to-lbl">'+m.lbl+'</span></div>';
+      }).join('')+'</div>'+
+      '<div id="wrap_maq_tipo" style="display:none;margin-top:8px">'+
+        '<label class="flabel">Tipo de máquina</label>'+
+        '<select class="finput" onchange="checkState.maq_tipo=this.value">'+
+          '<option value="">— Selecciona —</option>'+
+          '<option value="orbital">Orbital</option>'+
+          '<option value="rotoorbital3">Rotoorbital 3mm</option>'+
+          '<option value="rotoorbital5">Rotoorbital 5mm</option>'+
+        '</select></div></div>';
+  } else if(ex==='ir_secado'||ex==='ir_aparejo'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">🔴 Secado con infrarrojos</div>'+
+      '<div class="finput-row cols3" style="margin-top:6px">'+
+        '<div><label class="flabel">📏 Distancia</label>'+
+          '<select class="finput" onchange="checkState.ir_dist=this.value"><option value="">—</option>'+
+          '<option>20–30 cm</option><option>40–50 cm</option><option>60–80 cm</option></select></div>'+
+        '<div><label class="flabel">⏱️ Tiempo</label>'+
+          '<select class="finput" onchange="checkState.ir_tiempo=this.value"><option value="">—</option>'+
+          '<option>5–10 min</option><option>10–15 min</option><option>15–20 min</option></select></div>'+
+        '<div><label class="flabel">💨 Flash-off</label>'+
+          '<select class="finput" onchange="checkState.ir_flashoff=this.value"><option value="">—</option>'+
+          '<option>1 min</option><option>2 min</option><option>3 min</option></select></div>'+
+      '</div></div>';
+  } else if(ex==='marca_aparejo'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">🏷️ Marca y referencia del aparejo</div>'+
+      '<input class="finput" id="ex_marca_ap" placeholder="ej: Lechler Basis 2K Filler 507..." oninput="checkState.marca_aparejo=this.value"></div>';
+  } else if(ex==='catalizador'||ex==='catalizador_barn'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">⚗️ Catalizador utilizado</div>'+
+      '<div class="finput-row cols2">'+
+        '<div><label class="flabel">Nombre/ref.</label><input class="finput" placeholder="ej: H 5610..." oninput="checkState.cat_nombre=this.value"></div>'+
+        '<div><label class="flabel">Velocidad</label><select class="finput" onchange="checkState.cat_vel=this.value"><option value="">—</option><option>🐢 Lento</option><option>⚖️ Estándar</option><option>⚡ Rápido</option></select></div>'+
+      '</div></div>';
+  } else if(ex==='diluyente'||ex==='diluyente_barn'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">🧪 Diluyente utilizado</div>'+
+      '<div class="finput-row cols2">'+
+        '<div><label class="flabel">Nombre/ref.</label><input class="finput" placeholder="ej: T 498..." oninput="checkState.dil_nombre=this.value"></div>'+
+        '<div><label class="flabel">Velocidad</label><select class="finput" onchange="checkState.dil_vel=this.value"><option value="">—</option><option>🐢 Lento</option><option>⚖️ Estándar</option><option>⚡ Rápido</option></select></div>'+
+      '</div></div>';
+  } else if(ex==='metodo_mezcla'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">⚖️ Método de mezcla</div>'+
+      '<div class="tipo-grid cols2" style="margin-top:6px">'+
+      [{ico:'📐',lbl:'Por volumen',desc:'Probeta o vaso'},{ico:'⚖️',lbl:'Por peso',desc:'Pesar en báscula'}].map(function(m,i){
+        var k='metmez_'+i; checkState[k]=false;
+        return '<div class="tipo-opt" id="to_'+k+'" onclick="toggleTipoOpt(\''+k+'\')" ><span class="to-ico">'+m.ico+'</span><span class="to-lbl">'+m.lbl+'</span><span class="to-desc">'+m.desc+'</span></div>';
+      }).join('')+'</div>'+
+      '<label class="flabel" style="margin-top:8px">Proporción de la mezcla</label>'+
+      '<input class="finput" placeholder="ej: 4:1:1 aparejo:catalizador:diluyente" oninput="checkState.prop_mezcla=this.value"></div>';
+  } else if(ex==='pico_pistola'||ex==='pico_barn'||ex==='pico_fluido_pint'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">🔩 Pico de fluido de la pistola</div>'+
+      '<div class="tipo-grid cols3" style="margin-top:6px">'+
+      ['1.2','1.4','1.6','1.8','2.0','2.5'].map(function(p){
+        var k='pico_'+p.replace('.',''); checkState[k]=false;
+        return '<div class="tipo-opt" id="to_'+k+'" onclick="toggleTipoOpt(\''+k+'\')" ><span class="to-lbl" style="font-size:16px;font-weight:900">Ø'+p+'</span><span class="to-desc">mm</span></div>';
+      }).join('')+'</div></div>';
+  } else if(ex==='modo_aplicacion'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">🎨 Modo de aplicación</div>'+
+      '<select class="finput" style="margin-top:6px" onchange="checkState.modo_aplic=this.value">'+
+        '<option value="">— Selecciona —</option>'+
+        '<option>2 manos seguidas (sin espera)</option>'+
+        '<option>2–3 manos esperando a que matice entre ellas</option>'+
+        '<option>Es indiferente para este producto</option>'+
+      '</select></div>';
+  } else if(ex==='tsecado_aparejo'||ex==='tsecado_pint'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">⏱️ Tiempo de secado (ficha técnica)</div>'+
+      '<input class="finput" placeholder="ej: 30 min a 20°C / 15 min con IR" oninput="checkState.tsecado_ap=this.value"></div>';
+  } else if(ex==='tono_aparejo'){
+    var tonos=[{c:'#f5f5f5',n:'Blanco'},{c:'#bdbdbd',n:'Gris claro'},{c:'#757575',n:'Gris medio'},{c:'#212121',n:'Negro'}];
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">🎨 Tono del aparejo</div>'+
+      '<div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap">'+
+      tonos.map(function(t,i){
+        var k='tono_'+i; checkState[k]=false;
+        return '<div id="to_'+k+'" onclick="toggleTonoAparejo(\''+k+'\')" style="cursor:pointer;text-align:center;border:2px solid var(--border);border-radius:8px;padding:6px 10px;background:var(--surface2)">'+
+          '<div style="width:30px;height:30px;border-radius:50%;background:'+t.c+';border:1px solid var(--border);margin:0 auto 4px"></div>'+
+          '<div style="font-size:10px;font-weight:700;color:var(--text)">'+t.n+'</div></div>';
+      }).join('')+'</div></div>';
+  } else if(ex==='tipo_enmascarado'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">🎭 Tipo de enmascarado</div>'+
+      '<div class="tipo-grid cols2" style="margin-top:6px">'+
+      [{ico:'🎭',lbl:'Parcial'},{ico:'🔲',lbl:'Total'},{ico:'🪟',lbl:'Cristales/lunas'},{ico:'🚗',lbl:'Interior'}].map(function(m,i){
+        var k='enm_tipo_'+i; checkState[k]=false;
+        return '<div class="tipo-opt" id="to_'+k+'" onclick="toggleTipoOpt(\''+k+'\')" ><span class="to-ico">'+m.ico+'</span><span class="to-lbl">'+m.lbl+'</span></div>';
+      }).join('')+'</div></div>';
+  } else if(ex==='materiales_enmascarado'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">📦 Materiales utilizados</div>'+
+      '<div class="tipo-grid cols3" style="margin-top:6px">'+
+      [{ico:'📰',lbl:'Papel periódico'},{ico:'🟫',lbl:'Papel kraft'},{ico:'🟨',lbl:'Film plástico'},{ico:'🩹',lbl:'Cinta de carrocero'},{ico:'🔵',lbl:'Cinta de enmascarar'},{ico:'📋',lbl:'Enmascarador líquido'}].map(function(m,i){
+        var k='mat_'+i; checkState[k]=false;
+        return '<div class="tipo-opt" id="to_'+k+'" onclick="toggleTipoOpt(\''+k+'\')" ><span class="to-ico">'+m.ico+'</span><span class="to-lbl" style="font-size:10px">'+m.lbl+'</span></div>';
+      }).join('')+'</div></div>';
+  } else if(ex==='producto_limpieza'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">🧴 Producto de limpieza utilizado</div>'+
+      '<input class="finput" placeholder="ej: Desengrasante silicona, agua + jabón neutro..." oninput="checkState.prod_limpieza=this.value"></div>';
+  } else if(ex==='acabado_pintura'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">✨ Acabado</div>'+
+      '<div class="tipo-grid cols3" style="margin-top:6px">'+
+      [{ico:'✨',lbl:'Brillo'},{ico:'🔲',lbl:'Satinado'},{ico:'⬜',lbl:'Mate'}].map(function(m,i){
+        var k='acab_'+i; checkState[k]=false;
+        return '<div class="tipo-opt" id="to_'+k+'" onclick="toggleTipoOpt(\''+k+'\')" ><span class="to-ico">'+m.ico+'</span><span class="to-lbl">'+m.lbl+'</span></div>';
+      }).join('')+'</div></div>';
+  } else if(ex==='efecto_pintura'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">🎨 Efecto</div>'+
+      '<div class="tipo-grid cols3" style="margin-top:6px">'+
+      [{ico:'⬜',lbl:'Liso/sólido'},{ico:'✨',lbl:'Metalizado'},{ico:'🌟',lbl:'Perlado'}].map(function(m,i){
+        var k='efec_'+i; checkState[k]=false;
+        return '<div class="tipo-opt" id="to_'+k+'" onclick="toggleTipoOpt(\''+k+'\')" ><span class="to-ico">'+m.ico+'</span><span class="to-lbl">'+m.lbl+'</span></div>';
+      }).join('')+'</div></div>';
+  } else if(ex==='codigo_color'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">🏷️ Código de color</div>'+
+      '<input class="finput" placeholder="ej: LY9C, 300, 041..." oninput="checkState.cod_color=this.value"></div>';
+  } else if(ex==='formula_basicos'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">⚗️ Básicos de la fórmula</div>'+
+      '<textarea class="finput" rows="2" placeholder="Lista los básicos utilizados y cantidades..." oninput="checkState.formula=this.value"></textarea></div>';
+  } else if(ex==='cantidad_formulada'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">⚖️ Cantidad formulada</div>'+
+      '<input class="finput" placeholder="ej: 200g" oninput="checkState.cantidad_form=this.value"></div>';
+  } else if(ex==='pistola_pint'||ex==='pistola_barn'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">🔫 Pistola aerográfica</div>'+
+      '<input class="finput" placeholder="ej: SATA Jet 5000, DeVilbiss DV1..." oninput="checkState.pistola=this.value"></div>';
+  } else if(ex==='presion_trabajo'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">🌡️ Presión de trabajo</div>'+
+      '<input class="finput" placeholder="ej: 2 bar entrada / 1.4 bar salida" oninput="checkState.presion=this.value"></div>';
+  } else if(ex==='num_manos_pint'||ex==='num_manos_barn'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">🖌️ Número de manos aplicadas</div>'+
+      '<div class="tipo-grid cols4" style="margin-top:6px">'+
+      ['1','2','3','4'].map(function(n){
+        var k='manos_'+n; checkState[k]=false;
+        return '<div class="tipo-opt" id="to_'+k+'" onclick="toggleTipoOpt(\''+k+'\')" ><span class="to-lbl" style="font-size:22px;font-weight:900">'+n+'</span></div>';
+      }).join('')+'</div></div>';
+  } else if(ex==='vida_util_pint'||ex==='vida_util_barn'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">⏳ Vida útil de la mezcla</div>'+
+      '<input class="finput" placeholder="ej: 4 horas a 20°C" oninput="checkState.vida_util=this.value"></div>';
+  } else if(ex==='cov_pint'||ex==='cov_barn'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">🌿 COV (Compuestos Orgánicos Volátiles)</div>'+
+      '<input class="finput" placeholder="ej: 420 g/l" oninput="checkState.cov=this.value"></div>';
+  } else if(ex==='evap_manos_barn'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">💨 Tiempo de evaporación entre manos</div>'+
+      '<input class="finput" placeholder="ej: 10 min a 20°C" oninput="checkState.evap_manos=this.value"></div>';
+  } else if(ex==='tevap_barn'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">💨 Tiempo de evaporación final</div>'+
+      '<input class="finput" placeholder="ej: 20 min antes del horno" oninput="checkState.tevap=this.value"></div>';
+  } else if(ex==='producto_barniz'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">🏷️ Producto (barniz)</div>'+
+      '<input class="finput" placeholder="ej: Lechler Hardtop 40, Standox Standocryl..." oninput="checkState.prod_barniz=this.value"></div>';
+  } else if(ex==='tipo_defecto'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">🔍 Tipo de defecto</div>'+
+      '<div class="tipo-grid cols2" style="margin-top:6px">'+
+      [{ico:'🫧',lbl:'Ampollado'},{ico:'〰️',lbl:'Cuarteado'},{ico:'🔵',lbl:'Ojo de pez'},{ico:'🌊',lbl:'Escurridos'},{ico:'🟤',lbl:'Inclusiones suciedad'},{ico:'💨',lbl:'Falta de brillo'}].map(function(m,i){
+        var k='defecto_'+i; checkState[k]=false;
+        return '<div class="tipo-opt" id="to_'+k+'" onclick="toggleTipoOpt(\''+k+'\')" ><span class="to-ico">'+m.ico+'</span><span class="to-lbl" style="font-size:11px">'+m.lbl+'</span></div>';
+      }).join('')+'</div></div>';
+  } else if(ex==='proceso_corr'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">🛠️ Proceso utilizado</div>'+
+      '<div class="tipo-grid cols2" style="margin-top:6px">'+
+      [{ico:'🪨',lbl:'Lijado fino'},{ico:'🔮',lbl:'Pulido abrasivo'},{ico:'✨',lbl:'Abrillantado'},{ico:'🔄',lbl:'Repintado parcial'}].map(function(m,i){
+        var k='proc_corr_'+i; checkState[k]=false;
+        return '<div class="tipo-opt" id="to_'+k+'" onclick="toggleTipoOpt(\''+k+'\')" ><span class="to-ico">'+m.ico+'</span><span class="to-lbl">'+m.lbl+'</span></div>';
+      }).join('')+'</div></div>';
+  } else if(ex==='productos_corr'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">🧴 Productos utilizados</div>'+
+      '<textarea class="finput" rows="2" placeholder="ej: Compuesto de pulir 3M, abrillantador..." oninput="checkState.prods_corr=this.value"></textarea></div>';
+  } else if(ex==='utiles_corr'){
+    h += '<div class="cl-input-wrap"><div class="cl-input-label">🔧 Útiles y máquinas</div>'+
+      '<div class="tipo-grid cols3" style="margin-top:6px">'+
+      [{ico:'🔄',lbl:'Pulidora rotoorbital'},{ico:'💿',lbl:'Disco de pulir'},{ico:'🪨',lbl:'Taco de lijado'},{ico:'🧽',lbl:'Esponja de pulir'},{ico:'🔇',lbl:'Lijadora vibrante'},{ico:'✋',lbl:'A mano'}].map(function(m,i){
+        var k='util_'+i; checkState[k]=false;
+        return '<div class="tipo-opt" id="to_'+k+'" onclick="toggleTipoOpt(\''+k+'\')" ><span class="to-ico">'+m.ico+'</span><span class="to-lbl" style="font-size:11px">'+m.lbl+'</span></div>';
+      }).join('')+'</div></div>';
+  }
+  return h;
+}
+
+function toggleCheck(k){
+  checkState[k] = !checkState[k];
+  var box=document.getElementById('clb_'+k);
+  var item=document.getElementById('cli_'+k);
+  if(box){ box.innerHTML=checkState[k]?'✓':''; box.style.background=checkState[k]?'var(--success)':''; box.style.borderColor=checkState[k]?'var(--success)':''; }
+  if(item) item.classList.toggle('checked',checkState[k]);
+}
+
+function toggleEpi(k){
+  epiState[k]=!epiState[k];
+  var el=document.getElementById('epi_'+k);
+  if(el) el.classList.toggle('selected',epiState[k]);
+}
+
+function toggleOrden(k){
+  ordenState[k]=!ordenState[k];
+  var box=document.getElementById('ordb_'+k);
+  var item=document.getElementById('ord_'+k);
+  if(box){ box.innerHTML=ordenState[k]?'✓':''; box.style.background=ordenState[k]?'var(--success)':''; box.style.borderColor=ordenState[k]?'var(--success)':''; }
+  if(item) item.classList.toggle('checked',ordenState[k]);
+}
+
+function toggleTipoOpt(k){
+  var el=document.getElementById('to_'+k);
+  if(el){ el.classList.toggle('selected'); checkState[k]=el.classList.contains('selected'); }
+}
+
+function toggleTipoLijado(k,lbl){
+  ['metlij_0','metlij_1'].forEach(function(key){
+    var el=document.getElementById('to_'+key);
+    if(el) el.classList.remove('selected');
+    checkState[key]=false;
+  });
+  var el=document.getElementById('to_'+k);
+  if(el){ el.classList.add('selected'); checkState[k]=true; }
+  var wrapMaq=document.getElementById('wrap_maq_tipo');
+  if(wrapMaq) wrapMaq.style.display=lbl==='A máquina'?'block':'none';
+}
+
+function toggleTonoAparejo(k){
+  ['tono_0','tono_1','tono_2','tono_3'].forEach(function(key){
+    var el=document.getElementById('to_'+key);
+    if(el){ el.style.borderColor='var(--border)'; el.style.background='var(--surface2)'; checkState[key]=false; }
+  });
+  var el=document.getElementById('to_'+k);
+  if(el){ el.style.borderColor='var(--accent)'; el.style.background='var(--accent-light)'; checkState[k]=true; }
+}
+
+// ════════════════════════════════════════════
+// GUARDAR JORNADA
+// ════════════════════════════════════════════
+function guardarJornada(){
+  var boolKeys=Object.keys(checkState).filter(function(k){ return typeof checkState[k]==='boolean'; });
+  var doneCheck=boolKeys.filter(function(k){ return checkState[k]; }).length;
+  var p=PROCESOS[selProceso]||{icon:'🔧',name:selProceso};
+  var piezasTexto=Object.keys(selPiezas).map(function(k){ return k+' ('+selPiezas[k].dano+')'; }).join(' | ');
+
+  var reg = {
+    id: 'reg_'+Date.now(),
+    fecha: new Date().toLocaleDateString('es-ES'),
+    fechaISO: new Date().toISOString(),
+    alumnoNombre: currentAlumno.nombre,
+    vehiculoId: selVehiculo.id,
+    vehiculoNombre: selVehiculo.marca+' '+selVehiculo.modelo+' '+selVehiculo.anio,
+    matricula: selVehiculo.matricula,
+    piezas: Object.keys(selPiezas).map(function(k){ return {pieza:k, dano:selPiezas[k].dano}; }),
+    piezasTexto: piezasTexto,
+    horas: selHoras.slice(),
+    proceso: selProceso,
+    procesoNombre: p.name,
+    procesoIcon: p.icon,
+    checkDone: doneCheck,
+    checkTotal: boolKeys.length,
+    checkData: JSON.parse(JSON.stringify(checkState)),
+    epis: JSON.parse(JSON.stringify(epiState)),
+    orden: JSON.parse(JSON.stringify(ordenState)),
+    observaciones: document.getElementById('obsInput').value,
+    foto: fotoJornada,
+    validacion: null
+  };
+
+  var regs = lS(K.registros)||[];
+  regs.push(reg);
+  sS(K.registros, regs);
+
+  // Reset
+  selPiezas={}; selProceso=null; selHoras=[];
+  checkState={}; epiState={}; ordenState={};
+  fotoJornada=null;
+  document.querySelectorAll('.hora-opt').forEach(function(h){ h.classList.remove('selected'); });
+
+  irPaso(4);
+}
+
+// ════════════════════════════════════════════
+// FOTOS JORNADA
+// ════════════════════════════════════════════
+function triggerFoto(){ document.getElementById('fotoInput').click(); }
+function handleFoto(input){
+  if(!input.files||!input.files[0]) return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    fotoJornada=e.target.result;
+    var prev=document.getElementById('fotoPreview');
+    prev.style.display='block';
+    prev.innerHTML='<div style="position:relative"><img src="'+e.target.result+'" style="width:100%;border-radius:var(--radius-sm);max-height:200px;object-fit:cover">'+
+      '<button onclick="borrarFoto()" style="position:absolute;top:6px;right:6px;background:var(--danger);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:Nunito,sans-serif;font-weight:700">🗑️ Borrar</button></div>';
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+function borrarFoto(){ fotoJornada=null; document.getElementById('fotoPreview').style.display='none'; document.getElementById('fotoInput').value=''; }
+
+// ════════════════════════════════════════════
+// ALTA VEHÍCULO
+// ════════════════════════════════════════════
+var piezasAltaSel = {};
+function renderVehiculosExistentes(){
+  var vehiculos=lS(K.vehiculos)||[];
+  var wrap=document.getElementById('vehiculosExistentes');
+  if(!vehiculos.length){ wrap.innerHTML=''; return; }
+  wrap.innerHTML='<div class="section-title" style="margin-bottom:10px">🚗 Tus vehículos registrados</div>'+
+    vehiculos.map(function(v){
+      return '<div class="vehiculo-card active" style="margin-bottom:8px">'+
+        '<span class="vc-ico">🚗</span>'+
+        '<div class="vc-info">'+
+          '<div class="vc-name">'+v.marca+' '+v.modelo+' '+v.anio+'</div>'+
+          '<div class="vc-sub">🔖 '+v.matricula+' &nbsp;·&nbsp; 🎨 '+v.color+'</div>'+
+          '<div class="vc-sub">👤 '+v.cliente+' &nbsp;·&nbsp; 📞 '+v.telefono+'</div>'+
+        '</div>'+
+        '<div class="vc-check" style="display:flex">✓</div></div>';
+    }).join('');
+}
+
+function toggleFormVehiculo(){
+  var form=document.getElementById('formVehiculo');
+  var isHidden=form.style.display==='none';
+  form.style.display=isHidden?'block':'none';
+  document.getElementById('btnNuevoVehiculo').textContent=isHidden?'✕ Cancelar':'➕ Dar de alta nuevo vehículo';
+  if(isHidden){
+    // Render piezas grid
+    renderPiezasAltaGrid();
+    window.scrollTo(0,0);
+  }
+}
+
+function renderPiezasAltaGrid(){
+  var grid=document.getElementById('piezasAltaGrid');
+  piezasAltaSel={};
+  grid.innerHTML=TODAS_PIEZAS.map(function(p){
+    var slug=p.replace(/\s+/g,'_');
+    return '<div class="pieza-chip" id="alta_'+slug+'" onclick="togglePiezaAlta(\''+p+'\')">'+
+      '<span class="pc-check">✓</span> '+p+'</div>';
+  }).join('');
+}
+
+function togglePiezaAlta(p){
+  var slug=p.replace(/\s+/g,'_');
+  var chip=document.getElementById('alta_'+slug);
+  if(piezasAltaSel[p]){
+    delete piezasAltaSel[p];
+    if(chip) chip.classList.remove('selected');
+  } else {
+    piezasAltaSel[p]={dano:'leve'};
+    if(chip) chip.classList.add('selected');
+  }
+}
+
+function selectTipoCarroceria(el,v){ document.querySelectorAll('#formVehiculo .rec-section-body .tipo-grid:first-of-type .tipo-opt').forEach(function(o){ o.classList.remove('selected'); }); el.classList.add('selected'); tipoCarroceria=v; }
+function selectTipoEntrada(el,v){ el.closest('.tipo-grid').querySelectorAll('.tipo-opt').forEach(function(o){ o.classList.remove('selected'); }); el.classList.add('selected'); tipoEntrada=v; }
+function selectEstadoCristal(el,v){ el.closest('.tipo-grid').querySelectorAll('.tipo-opt').forEach(function(o){ o.classList.remove('selected'); }); el.classList.add('selected'); estadoCristal=v; }
+
+function setFuel(el,v){
+  document.querySelectorAll('.fuel-opt').forEach(function(o){ o.classList.remove('selected'); });
+  el.classList.add('selected');
+  fuelVehiculo=v;
+}
+
+function toggleCond(el){
+  var k=el.getAttribute('data-k');
+  var status=el.querySelector('.ci-status');
+  if(!condVehiculo[k]){
+    condVehiculo[k]='ok';
+    el.classList.add('ok'); el.classList.remove('ko');
+    if(status) status.textContent='✅ OK';
+  } else if(condVehiculo[k]==='ok'){
+    condVehiculo[k]='ko';
+    el.classList.add('ko'); el.classList.remove('ok');
+    if(status) status.textContent='❌ No';
+  } else {
+    delete condVehiculo[k];
+    el.classList.remove('ok','ko');
+    if(status) status.textContent='—';
+  }
+}
+
+// Mapa de daños
+function clickDamagezone(zona, nombre){
+  if(danosVehiculo[zona]){
+    delete danosVehiculo[zona];
+    var el=document.getElementById('dz_'+zona);
+    if(el){ el.style.fill='transparent'; el.style.opacity='1'; }
+  } else {
+    danosVehiculo[zona]={nombre:nombre, nivel:'medio'};
+    var el=document.getElementById('dz_'+zona);
+    if(el){ el.style.fill='rgba(239,68,68,0.25)'; el.style.stroke='#ef4444'; el.style.strokeWidth='2'; }
+  }
+  renderDanosBadges();
+}
+
+function renderDanosBadges(){
+  var wrap=document.getElementById('danosBadges');
+  var zonas=Object.keys(danosVehiculo);
+  if(!zonas.length){ wrap.innerHTML='<span style="font-size:12px;color:var(--text-dim)">Toca las zonas dañadas en el dibujo del vehículo</span>'; return; }
+  wrap.innerHTML=zonas.map(function(z){
+    return '<span class="damage-badge medio">💥 '+danosVehiculo[z].nombre+'</span>';
+  }).join('');
+}
+
+// Fotos vehículo
+function triggerFotoVehiculo(angulo){ document.getElementById('finput_'+angulo).click(); }
+function handleFotoVehiculo(input, angulo){
+  if(!input.files||!input.files[0]) return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    fotosVehiculo[angulo]=e.target.result;
+    var slot=document.getElementById('fslot_'+angulo);
+    if(slot){
+      slot.innerHTML='<img src="'+e.target.result+'" style="width:100%;height:100%;object-fit:cover;border-radius:6px">'+
+        '<div class="foto-overlay"><span>📸 OK</span><button class="foto-del" onclick="borrarFotoV(\''+angulo+'\',event)">🗑️</button></div>';
+      slot.classList.add('has-photo');
+    }
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+function borrarFotoV(angulo,e){
+  e.stopPropagation();
+  delete fotosVehiculo[angulo];
+  var labels={'frontal':'🔼 Frontal','trasera':'🔽 Trasera','lateral_d':'▶️ Lateral dcha.','lateral_i':'◀️ Lateral izda.'};
+  var slot=document.getElementById('fslot_'+angulo);
+  if(slot){
+    slot.innerHTML='<span class="foto-slot-icon">📷</span><span class="foto-slot-label">'+labels[angulo]+'</span>';
+    slot.classList.remove('has-photo');
+  }
+}
+
+function guardarVehiculo(){
+  var marca=document.getElementById('rv_marca').value.trim();
+  var modelo=document.getElementById('rv_modelo').value.trim();
+  var matricula=document.getElementById('rv_matricula').value.trim();
+  if(!marca||!modelo||!matricula){ alert('Rellena al menos la marca, el modelo y la matrícula.'); return; }
+
+  var vehiculo={
+    id:'veh_'+Date.now(),
+    marca: marca,
+    modelo: modelo,
+    anio: document.getElementById('rv_anio').value||'',
+    matricula: matricula.toUpperCase(),
+    color: document.getElementById('rv_color').value||'',
+    km: document.getElementById('rv_km').value||'',
+    vin: document.getElementById('rv_vin').value||'',
+    tipoCarroceria: tipoCarroceria,
+    cliente: document.getElementById('rv_cliente').value||'',
+    telefono: document.getElementById('rv_telefono').value||'',
+    seguro: document.getElementById('rv_seguro').value||'',
+    expediente: document.getElementById('rv_expediente').value||'',
+    tipoEntrada: tipoEntrada,
+    combustible: fuelVehiculo,
+    condicion: JSON.parse(JSON.stringify(condVehiculo)),
+    estadoCristal: estadoCristal,
+    danosCarroceria: JSON.parse(JSON.stringify(danosVehiculo)),
+    piezas: Object.keys(piezasAltaSel).concat(Object.keys(danosVehiculo).map(function(z){ return danosVehiculo[z].nombre; })).filter(function(v,i,a){ return a.indexOf(v)===i; }),
+    trabajos: document.getElementById('rv_trabajos').value||'',
+    presupuesto: document.getElementById('rv_presupuesto').value||'',
+    observaciones: document.getElementById('rv_obs').value||'',
+    fotos: JSON.parse(JSON.stringify(fotosVehiculo)),
+    fechaAlta: new Date().toLocaleDateString('es-ES')
+  };
+
+  var vehiculos=lS(K.vehiculos)||[];
+  vehiculos.push(vehiculo);
+  sS(K.vehiculos, vehiculos);
+
+  // Reset form
+  fotosVehiculo={}; danosVehiculo={}; condVehiculo={}; piezasAltaSel={}; tipoCarroceria=null; tipoEntrada=null; estadoCristal=null; fuelVehiculo=null;
+  toggleFormVehiculo();
+  renderVehiculosExistentes();
+  alert('✅ Vehículo guardado correctamente. Ya puedes registrar jornadas con él.');
+}
+
+// ════════════════════════════════════════════
+// HISTORIAL
+// ════════════════════════════════════════════
+function renderHistorial(){
+  var regs=(lS(K.registros)||[]).slice().reverse();
+  var wrap=document.getElementById('historialList');
+  if(!regs.length){
+    wrap.innerHTML='<div class="empty-state"><span class="es-icon">📚</span><p>Tu historial está vacío.<br>Cuando registres jornadas aparecerán aquí.</p></div>';
+    return;
+  }
+  wrap.innerHTML=regs.map(function(r,i){
+    var p=PROCESOS[r.proceso]||{icon:'🔧',name:r.proceso};
+    var horasTotal=Array.isArray(r.horas)?r.horas.reduce(function(a,b){ return a+b; },0):0;
+    var pct=r.checkTotal>0?Math.round(r.checkDone/r.checkTotal*100):0;
+    return '<div class="reg-card">'+
+      '<div class="reg-head">'+
+        '<span>📅</span>'+
+        '<span class="reg-fecha">'+r.fecha+'</span>'+
+        '<span class="reg-fase-badge">'+p.icon+' '+p.name+'</span>'+
+        '<span class="reg-status pendiente">⏳ Pendiente</span>'+
+      '</div>'+
+      '<div class="reg-body">'+
+        '⏱️ '+horasTotal+' h &nbsp;·&nbsp; '+
+        '🔩 '+r.piezasTexto+' &nbsp;·&nbsp; '+
+        '✅ '+pct+'% checklist'+
+        (r.foto?'&nbsp;·&nbsp; 📸 foto':'')+''+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+// ════════════════════════════════════════════
+// EXPORTAR
+// ════════════════════════════════════════════
+function renderResumenExport(){
+  var regs=lS(K.registros)||[];
+  var vehiculos=lS(K.vehiculos)||[];
+  var horas=regs.reduce(function(s,r){ return s+(Array.isArray(r.horas)?r.horas.reduce(function(a,b){ return a+b; },0):0); },0);
+  var wrap=document.getElementById('resumenExport');
+  wrap.innerHTML=
+    '<div style="display:flex;flex-direction:column;gap:8px">'+
+    '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-weight:700;color:var(--text-dim)">👷 Alumno</span><span style="font-weight:800">'+( currentAlumno?currentAlumno.nombre:'—')+'</span></div>'+
+    '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-weight:700;color:var(--text-dim)">🚗 Vehículos</span><span style="font-weight:800">'+vehiculos.length+'</span></div>'+
+    '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-weight:700;color:var(--text-dim)">📅 Jornadas</span><span style="font-weight:800">'+regs.length+'</span></div>'+
+    '<div style="display:flex;justify-content:space-between;padding:8px 0"><span style="font-weight:700;color:var(--text-dim)">⏱️ Horas totales</span><span style="font-weight:800">'+horas+' h</span></div>'+
+    '</div>';
+}
+
+function exportarCuaderno(){
+  var data={
+    version: 2,
+    exportadoEn: new Date().toISOString(),
+    alumno: lS(K.alumno),
+    vehiculos: lS(K.vehiculos)||[],
+    registros: lS(K.registros)||[]
+  };
+  var json=JSON.stringify(data);
+  var blob=new Blob([json],{type:'application/json'});
+  var url=URL.createObjectURL(blob);
+  var nombre=(currentAlumno?currentAlumno.nombre.replace(/\s+/g,'_'):'alumno')+'_cuaderno_'+new Date().toISOString().slice(0,10)+'.json';
+  var a=document.createElement('a');
+  a.href=url; a.download=nombre; a.click();
+  URL.revokeObjectURL(url);
+  setTimeout(function(){
+    alert('📤 Archivo "'+nombre+'" descargado.\n\nAhora ábrelo en WhatsApp y mándaselo al profesor para que evalúe tu cuaderno.');
+  },500);
+}
+
+// ════════════════════════════════════════════
+// LIGHTBOX
+// ════════════════════════════════════════════
+function openLightbox(src){ document.getElementById('lightboxImg').src=src; document.getElementById('lightbox').classList.add('open'); }
+function closeLightbox(){ document.getElementById('lightbox').classList.remove('open'); }
+</script>
+</body>
+</html>
