@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -3931,7 +3931,7 @@ function renderHistorial(){
       jorns.slice().reverse().forEach(function(r){
         var h=Array.isArray(r.horas)?r.horas.reduce(function(a,b){return a+b;},0):0;
         var pct=r.checkTotal>0?Math.round(r.checkDone/r.checkTotal*100):0;
-        html += '<div style="font-size:11px;color:var(--text-dim);padding:2px 0;border-bottom:1px dashed var(--border)">📅 '+r.fecha+' · '+h+' clase'+(h!==1?'s':'')+' · '+r.piezasTexto+(r.checkTotal?' · ✅ '+pct+'%':'')+(r.foto?' · 📸':'')+'</div>';
+        html += '<div style="font-size:11px;color:var(--text-dim);padding:2px 0;border-bottom:1px dashed var(--border)">' + r.fecha+' '+h+' clase'+(h!==1?'s':'')+' '+r.piezasTexto+(r.checkTotal?' '+pct+'%':'')+(r.foto?' FOTO':'')+' </div>';
       });
       html += '</div>';
       if(botonEntrega) html += botonEntrega;
@@ -3944,18 +3944,27 @@ function renderHistorial(){
   wrap.innerHTML = html;
 }
 
-// ════════════════════════════════════════════
-// GAS — URL COMPARTIDA (alumno y profesor usan la misma)
-// ════════════════════════════════════════════
-// IMPORTANTE: pon aquí la URL /exec de tu GAS tras desplegarlo
-var GAS_URL = 'https://script.google.com/macros/s/AKfycbzAJ8vds1VW1BW1fnPen53QIAmNQA5DXUXkCZnuckVnnY9GrbuMW2o7_YmeveuofzSg/exec'; // ← reemplaza esto
+// ================================
+// GAS - URL COMPARTIDA (alumno y profesor usan la misma)
+// ================================
+// IMPORTANTE: pon aqui la URL /exec de tu GAS tras desplegarlo
+var GAS_URL = 'https://script.google.com/macros/s/AKfycbzAJ8vds1VW1BW1fnPen53QIAmNQA5DXUXkCZnuckVnnY9GrbuMW2o7_YmeveuofzSg/exec'; // reemplaza esto
 
-function gasAlumnoPost(action, data, cb){
+function gasAlumnoPost(action, data, cb, _intentos){
+  _intentos = _intentos || 0;
   if(!GAS_URL||GAS_URL==='TU_GAS_URL_AQUI'){ if(cb) cb(false,'GAS no configurado'); return; }
   fetch(GAS_URL+'?action='+action,{method:'POST',body:JSON.stringify(data)})
     .then(function(r){return r.json();})
     .then(function(res){if(cb) cb(!!res.ok,res);})
-    .catch(function(e){if(cb) cb(false,e);});
+    .catch(function(e){
+      if(_intentos < 3){
+        var espera = Math.pow(2, _intentos + 1) * 1000;
+        mostrarSyncBanner('⚠️ Sin conexión — reintentando en '+(espera/1000)+'s… ('+ (_intentos+1)+'/3)');
+        setTimeout(function(){ gasAlumnoPost(action, data, cb, _intentos + 1); }, espera);
+      } else {
+        if(cb) cb(false, e);
+      }
+    });
 }
 
 function gasAlumnoGet(action, params, cb){
@@ -3965,6 +3974,17 @@ function gasAlumnoGet(action, params, cb){
     .then(function(r){return r.json();})
     .then(function(res){if(cb) cb(res.ok?res.data:null);})
     .catch(function(e){if(cb) cb(null);});
+}
+
+function verificarEntregaRecibida(entregaId, proceso){
+  gasAlumnoGet('getEstadoEntrega',{entregaId:entregaId},function(data){
+    if(data&&data.estado){
+      var msgs={pendiente:'✅ El profesor la ha recibido — pendiente de evaluar',evaluado:'🎓 ¡Ya está evaluada! Consulta tus notas',error:'⚠️ No consta en el servidor — vuelve a entregar'};
+      toast(msgs[data.estado]||'🔍 Estado: '+data.estado);
+    } else {
+      toast('⚠️ Sin respuesta del servidor — comprueba tu conexión');
+    }
+  });
 }
 
 // ════════════════════════════════════════════
@@ -4044,8 +4064,9 @@ function entregarProceso(){
   var nombre=(a.nombre||'')+(a.apellidos?' '+a.apellidos:'');
   var entregaId=a.id+'_'+proceso+'_'+vidSel+'_'+Date.now();
   var vNombre=veh?(veh.marca+' '+veh.modelo+' '+veh.matricula):vidSel;
+  var ahora=new Date();
   var entregas=lS(K_ENTREGAS)||[];
-  entregas.push({id:entregaId,proceso:proceso,procesoNombre:pNombre,vehiculoId:vidSel,vehiculo:vNombre,numJornadas:regs.length,fecha:new Date().toLocaleDateString('es-ES'),estado:'enviando'});
+  entregas.push({id:entregaId,proceso:proceso,procesoNombre:pNombre,vehiculoId:vidSel,vehiculo:vNombre,numJornadas:regs.length,fecha:ahora.toLocaleDateString('es-ES'),horaEntrega:ahora.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}),estado:'enviando'});
   sS(K_ENTREGAS,entregas);
   renderEntregasLocales();
   mostrarSyncBanner('⏳ Enviando proceso al profesor…');
@@ -4063,13 +4084,22 @@ function renderEntregasLocales(){
   var entregas=lS(K_ENTREGAS)||[];
   var wrap=document.getElementById('listaEntregasAlumno');
   if(!wrap) return;
-  if(!entregas.length){wrap.innerHTML='<div style="color:var(--text-dim);font-size:13px;text-align:center;padding:16px 0">Aún no has entregado ningún proceso.</div>';return;}
-  var estados={'enviando':'<span style="color:var(--warning);font-weight:700">⏳ Enviando…</span>','pendiente':'<span style="color:var(--accent);font-weight:700">🕐 Pendiente de evaluar</span>','evaluado':'<span style="color:var(--success);font-weight:700">✅ Evaluado</span>','error':'<span style="color:var(--danger);font-weight:700">⚠️ Error — reintenta</span>'};
+  if(!entregas.length){wrap.innerHTML='<div style="color:var(--text-dim);font-size:13px;text-align:center;padding:16px 0">A\u00fan no has entregado ning\u00fan proceso.</div>';return;}
+  var estados={'enviando':'<span style="color:var(--warning);font-weight:700">&#x23F3; Enviando&hellip;</span>','pendiente':'<span style="color:var(--accent);font-weight:700">&#x1F550; Pendiente de evaluar</span>','evaluado':'<span style="color:var(--success);font-weight:700">&#x2705; Evaluado</span>','error':'<span style="color:var(--danger);font-weight:700">&#x26A0;&#xFE0F; Error &mdash; reintenta</span>'};
   wrap.innerHTML=entregas.slice().reverse().map(function(e){
+    var horaTxt = e.horaEntrega ? ' a las '+e.horaEntrega : '';
+    var verifBtn = (e.estado==='pendiente')
+      ? '<button onclick="verificarEntregaRecibida(\''+e.id+'\',\''+e.proceso+'\')" style="font-size:10px;padding:3px 8px;margin-top:5px;cursor:pointer;border:1px solid var(--border);border-radius:4px;background:var(--surface2);font-weight:700">&#x1F50D; Verificar recibo</button>'
+      : '';
+    var retryBtn = (e.estado==='error')
+      ? '<button onclick="entregarProcesoDirecto(\''+e.vehiculoId+'\',\''+e.proceso+'\')" style="font-size:10px;padding:3px 8px;margin-top:5px;margin-left:4px;cursor:pointer;border:none;border-radius:4px;background:var(--danger);color:#fff;font-weight:700">&#x1F504; Reintentar</button>'
+      : '';
     return '<div style="padding:10px 0;border-bottom:1px solid var(--border)">'+
       '<div style="font-size:13px;font-weight:700">'+(PROCESOS[e.proceso]?PROCESOS[e.proceso].icon+' ':'')+e.procesoNombre+'</div>'+
-      '<div style="font-size:12px;color:var(--text-dim)">🚗 '+e.vehiculo+' · 📅 '+e.fecha+' · '+e.numJornadas+' jornada'+(e.numJornadas!==1?'s':'')+'</div>'+
-      '<div style="font-size:12px">'+(estados[e.estado]||e.estado)+'</div></div>';
+      '<div style="font-size:12px;color:var(--text-dim)">&#x1F697; '+e.vehiculo+' &middot; &#x1F4C5; '+e.fecha+horaTxt+' &middot; '+e.numJornadas+' jornada'+(e.numJornadas!==1?'s':'')+' </div>'+
+      '<div style="font-size:12px">'+(estados[e.estado]||e.estado)+'</div>'+
+      (verifBtn||retryBtn?'<div>'+verifBtn+retryBtn+'</div>':'')+
+      '</div>';
   }).join('');
 }
 
@@ -4181,19 +4211,21 @@ function gasProfePost(action, data, cb){
 }
 
 // ── COLA DE ENTREGAS (nuevo flujo) ───────────────────────────────────
-function cargarEntregasPendientes(){
+function cargarEntregasPendientes(cb){
   var badge = document.getElementById('badgeEntregas');
   gasProfeGet('getEntregas',{estado:'pendiente'},function(data){
-    if(!data||!data.length){
+    var n = (data&&data.length)||0;
+    if(!n){
       if(badge) badge.style.display='none';
+      renderColaEntregas([]);
+      if(cb) cb(0);
       return;
     }
     // Badge contador en sidebar
-    if(badge){ badge.textContent=data.length; badge.style.display='inline-flex'; }
+    if(badge){ badge.textContent=n; badge.style.display='inline-flex'; }
     // Importar cuadernos de alumnos que aún no están en memoria
     data.forEach(function(entrega){
       if(!alumnos[entrega.alumnoKey]){
-        // Descargar cuaderno completo desde la nube
         gasProfeGet('getCuaderno',{alumnoKey:entrega.alumnoKey},function(cuaderno){
           if(cuaderno){
             alumnos[entrega.alumnoKey] = cuaderno;
@@ -4204,8 +4236,35 @@ function cargarEntregasPendientes(){
       }
     });
     renderColaEntregas(data);
+    if(cb) cb(n);
   });
 }
+
+// ── NOTIFICACIÓN NUEVA ENTREGA ────────────────────────────────────────
+function notificarNuevaEntrega(n){
+  // Notificación del sistema si está permitida
+  if(typeof Notification!=='undefined'&&Notification.permission==='granted'){
+    new Notification('📥 TallerLog — Nueva entrega',{body:n+' proceso'+(n!==1?'s':'')+' esperan evaluación',icon:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><text y="26" font-size="28">📋</text></svg>'});
+  }
+  showSyncToast('🔔 ¡'+n+' entrega'+(n!==1?'s':'')+' nueva'+(n!==1?'s':'')+' recibida'+(n!==1?'s':'')+'! Revisa la cola.');
+  // Animar badge
+  var badge=document.getElementById('badgeEntregas');
+  if(badge){
+    badge.style.transform='scale(1.5)';
+    setTimeout(function(){ badge.style.transform=''; badge.style.transition='transform 0.3s'; }, 400);
+  }
+  // Sonido de notificación (beep con Web Audio)
+  try{
+    var ctx=new(window.AudioContext||window.webkitAudioContext)();
+    var osc=ctx.createOscillator();
+    var gain=ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.frequency.setValueAtTime(880,ctx.currentTime);
+    osc.frequency.setValueAtTime(1100,ctx.currentTime+0.1);
+    gain.gain.setValueAtTime(0.3,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.4);
+    osc.start(ctx.currentTime); osc.stop(ctx.currentTime+0.4);
+  }catch(e){}
 
 function renderColaEntregas(entregas){
   var wrap = document.getElementById('colaEntregas');
@@ -4331,19 +4390,45 @@ function showSyncToast(msg){
   setTimeout(function(){ t.classList.remove('show'); }, 3000);
 }
 
+// ── POLLING ADAPTATIVO ───────────────────────────────────────────────
+var _pollInterval  = 10000;  // empieza en 10s
+var _pollTimer     = null;
+var _entregasVistas = 0;
+
+function iniciarPolling(){
+  if(_pollTimer) clearTimeout(_pollTimer);
+  _pollTimer = setTimeout(function(){
+    cargarEntregasPendientes(function(n){
+      if(n > _entregasVistas){
+        notificarNuevaEntrega(n);
+        _pollInterval = 10000;          // hay actividad → rápido
+      } else if(n === 0){
+        _pollInterval = Math.min(_pollInterval * 1.5, 30000); // sin nada → ralentizar (max 30s)
+      }
+      _entregasVistas = n;
+      iniciarPolling(); // reprogramar
+    });
+  }, _pollInterval);
+}
+
 function init(){
   loadAlumnos();
   renderSidebar();
   setupDrop();
+  // Pedir permiso para notificaciones del navegador
+  if(typeof Notification!=='undefined'&&Notification.permission==='default'){
+    Notification.requestPermission();
+  }
   // Restaurar evaluaciones desde Google Sheets al iniciar
   cargarCierresCloud(function(){
     if(alumnoActivo) verAlumno(alumnoActivo, activeTab);
-    showSyncStatusBar("☁️ Evaluaciones restauradas desde la nube");
+    showSyncStatusBar('☁️ Evaluaciones restauradas desde la nube');
   });
-  // Cargar cola de entregas pendientes
-  cargarEntregasPendientes();
-  // Refrescar cada 60 segundos
-  setInterval(cargarEntregasPendientes, 60000);
+  // Cargar cola de entregas y arrancar polling adaptativo
+  cargarEntregasPendientes(function(n){
+    _entregasVistas = n;
+    iniciarPolling();
+  });
 }
 
 // ── DROP ZONE
